@@ -11,7 +11,7 @@ export default {
          !isPartner &&
          !isAdmin &&
          m.type === 'protocolMessage' &&
-         m.msg?.type == 0 &&
+         m.msg?.type === 0 &&
          !m.fromMe
       ) {
          const message = store.getMessage({

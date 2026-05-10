@@ -84,7 +84,7 @@ export default {
         [userId],
         command === "kick" ? "remove" : command,
       );
-      if (json.status == 200)
+      if (json.status === 200)
         return m.reply(`✅ Successfully ${command} @${userId.split("@")[0]}.`);
       m.reply(`❌ Failed to ${command} @${userId.split("@")[0]}.`);
     }

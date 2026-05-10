@@ -103,7 +103,7 @@ export default {
           CATEGORY_EMOJIS[text] ?? "📁",
         );
         return m.reply(print.trim());
-      } else if (setting.menuStyle == 1) {
+      } else if (setting.menuStyle === 1) {
         message += frame(
           "CATEGORIES",
           categories.map((cmd) => isPrefix + command + " " + cmd),
@@ -117,7 +117,7 @@ export default {
             largeThumbnail: true,
           },
         });
-      } else if (setting.menuStyle == 2)
+      } else if (setting.menuStyle === 2)
         sock.sendMessage(
           m.chat,
           {
@@ -149,7 +149,7 @@ export default {
             quoted: m,
           },
         );
-      else if (setting.menuStyle == 3)
+      else if (setting.menuStyle === 3)
         sock.sendMessage(
           m.chat,
           {
@@ -198,7 +198,7 @@ export default {
             quoted: m,
           },
         );
-      else if (setting.menuStyle == 4)
+      else if (setting.menuStyle === 4)
         sock.sendMessage(
           m.chat,
           {
@@ -242,7 +242,7 @@ export default {
             quoted: m,
           },
         );
-      else if (setting.menuStyle == 5)
+      else if (setting.menuStyle === 5)
         sock.sendMessage(
           m.chat,
           {
@@ -292,7 +292,7 @@ export default {
             quoted: m,
           },
         );
-      else if (setting.menuStyle == 6) {
+      else if (setting.menuStyle === 6) {
         const profilePicture = await sock.profilePicture(m.sender);
         sock.sendMessage(
           m.chat,
@@ -325,7 +325,7 @@ export default {
             quoted: m,
           },
         );
-      } else if (setting.menuStyle == 7) {
+      } else if (setting.menuStyle === 7) {
         const profilePicture = await sock.profilePicture(m.sender);
         sock.sendMessage(
           m.chat,
@@ -375,7 +375,7 @@ export default {
             quoted: m,
           },
         );
-      } else if (setting.menuStyle == 8)
+      } else if (setting.menuStyle === 8)
         sock.sendMessage(
           m.chat,
           {
