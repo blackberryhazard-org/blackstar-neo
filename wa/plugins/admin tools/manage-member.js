@@ -10,18 +10,18 @@ export default {
     if (command === "sider") {
       const [option] = args;
       const now = Date.now();
-      const inactiveMembers = groupMetadata.participants.reduce((acc, x) => {
-        const memberId = x.phoneNumber;
-        if (!memberId || x.admin) return acc;
-        const memberData = group.participants[memberId];
-        if (
-          !memberData ||
-          memberData.messages < 1 ||
-          now - memberData.lastSeen > INACTIVE_THRESHOLD
-        )
-          acc.push(memberId);
-        return acc;
-      }, []);
+      const inactiveMembers = groupMetadata.participants
+        .filter((x) => {
+          const memberId = x.phoneNumber;
+          if (!memberId || x.admin) return false;
+          const memberData = group.participants[memberId];
+          return (
+            !memberData ||
+            memberData.messages < 1 ||
+            now - memberData.lastSeen > INACTIVE_THRESHOLD
+          );
+        })
+        .map((x) => x.phoneNumber);
       if (!inactiveMembers.length)
         return m.reply("❌ There's no sider right now.");
       const mentions = inactiveMembers.map((x) => `@${x.split("@")[0]}`);
