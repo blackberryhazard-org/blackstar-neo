@@ -1,139 +1,143 @@
 # AGENTS.md — Blackstar
 
-## 1) Project Overview
-
-- **Name**: Blackstar
-- **Deskripsi**: Bot WhatsApp dan Telegram yang berjalan berdampingan dalam satu codebase.
-- **Tujuan**: Menyediakan fitur otomatisasi chat, utilitas grup, dan command interaktif secara stabil.
-- **Target users**: Pengguna WhatsApp & Telegram (personal chat dan grup).
-- **Version**: v0.1.0
-- **Status**: Active development
+> Dokumen ini adalah sumber kebenaran tunggal untuk Jules saat bekerja di codebase Blackstar.
+> Baca seluruhnya sebelum memulai task apapun. Jika ada konflik antara instruksi user dan dokumen ini, klarifikasi dulu sebelum bertindak.
 
 ---
 
-## 2) Tech Stack
+## 1. Project Overview
 
-- **Runtime**: Node.js
-- **Language**: JavaScript (CommonJS)
-- **WhatsApp framework**: `@itsliaaa/baileys`
-- **Telegram framework**: `telegraf`
-- **HTTP client**: `axios`
-- **Storage utama**: JSON
-- **Package manager**: npm
-- **Testing**: vitest
-- **Deployment**: HidenCloud (pterodactyl)
+**Blackstar** adalah bot WhatsApp dan Telegram yang berjalan dalam satu codebase. Bot ini menyediakan fitur otomatisasi chat, utilitas grup, dan command interaktif untuk pengguna personal maupun grup.
+
+| Field   | Value                  |
+|---------|------------------------|
+| Version | v0.1.0                 |
+| Status  | Active development     |
+| Runtime | Node.js (CommonJS)     |
 
 ---
 
-## 3) Commands
+## 2. Tech Stack
 
-```bash
-# Menjalankan bot
-npm run start
+| Kategori           | Package / Tool          |
+|--------------------|-------------------------|
+| WhatsApp framework | `@itsliaaa/baileys`     |
+| Telegram framework | `telegraf`              |
+| HTTP client        | `axios`                 |
+| Storage            | JSON (flat file)        |
+| Package manager    | npm                     |
+| Testing            | vitest                  |
+| Deployment         | HidenCloud (Pterodactyl)|
 
-# Quality
-npm run lint
-npm run format
+---
 
-# Testing
-npm run test
-npm run test:unit
-npm run test:e2e
+## 3. Struktur Proyek
+
 ```
-
-> Jules wajib memilih command yang paling relevan dengan perubahan. Tidak wajib menjalankan semuanya bila perubahan kecil, tapi minimal lakukan validasi yang masuk akal.
-
----
-
-## 4) Struktur Proyek (Aktual)
-
-Contoh struktur yang saat ini digunakan:
-
-```txt
 [root]/
   lib/
-    Components/        # Modul fitur bot (economy, anti-spam, quiz, AI integration, dll)
-    *.js               # Utility inti (database, listener, watcher, serializer, scraper, dll)
-  tg/             # Bot telegram (implementasi command, middleware, runtime event)
-  wa/             # Bot whatsapp (implementasi command, middleware, runtime event)
-  index.js                 # Entrypoint
-  config.js                # Konfigurasi
-  load_globals.js          # Load config secara global
+    Components/   # Modul fitur bot: economy, anti-spam, quiz, AI integration, dll.
+    *.js          # Utility inti: database, listener, watcher, serializer, scraper, dll.
+  tg/             # Bot Telegram — command, middleware, runtime event
+  wa/             # Bot WhatsApp — command, middleware, runtime event
+  index.js        # Entrypoint
+  config.js       # Konfigurasi aplikasi
+  load_globals.js # Bootstrap config ke global scope
 ```
 
-Aturan penempatan file:
+**Aturan penempatan file:**
 
-- Logika command/fitur bot: `lib/Components/`
-- Helper umum dan utilitas lintas fitur: `lib/`
-- Jangan buat folder baru tanpa konfirmasi user.
-- Jangan memindahkan atau menghapus file yang sudah ada tanpa konfirmasi user.
-
----
-
-## 5) Naming Conventions
-
-- **File non-komponen**: `camelCase.js` (contoh: `messageParser.js`)
-- **Class/constructor/helper khusus**: boleh `PascalCase.js` jika memang pola file lama begitu
-- **Folder**: ikuti pola existing project (saat ini `Components` sudah ada dan dipertahankan)
-- **Test file**: `[nama].test.js` / `[nama].spec.js`
-- **Variabel & fungsi**: `camelCase`
-- **Konstanta**: `UPPER_SNAKE_CASE`
-
-Konsistensi dengan file sekitar lebih penting daripada memaksa pola baru.
+- Logic command dan fitur bot → `lib/Components/`
+- Helper dan utilitas lintas fitur → `lib/`
+- **Dilarang membuat folder baru tanpa konfirmasi user.**
+- **Dilarang memindahkan atau menghapus file tanpa konfirmasi user.**
 
 ---
 
-## 6) Code Conventions
+## 4. Commands
 
-- Utamakan **clean code**, keterbacaan, dan minim duplikasi.
-- Untuk async flow (handler command, request API, operasi file): gunakan `try/catch`.
-- Error message harus jelas konteksnya (mis. nama command/fitur yang gagal).
-- Jangan hardcode secret, token, API key, nomor owner, atau endpoint sensitif.
-- Jika ada fallback behavior, jelaskan lewat komentar singkat yang perlu.
-- Jangan menambahkan dependency baru tanpa persetujuan user.
+```bash
+npm run start        # Jalankan bot
+npm run lint         # Cek code style
+npm run format       # Format kode
+npm run test         # Jalankan semua test
+npm run test:unit    # Unit test saja
+npm run test:e2e     # End-to-end test saja
+```
 
-Urutan import yang disarankan:
-
-1. External libraries
-2. Internal modules absolut/alias (jika ada)
-3. Internal relative modules
+Jalankan command yang **paling relevan** dengan perubahan yang dilakukan. Tidak perlu menjalankan semuanya, tapi validasi minimal wajib dilakukan.
 
 ---
 
-## 7) Aturan Khusus Bot WhatsApp & Telegram
+## 5. Conventions
 
-- Setiap perubahan command harus mempertimbangkan kompatibilitas dua platform bila modul dipakai bersama.
-- Hindari asumsi format message identik antara WhatsApp dan Telegram.
-- Normalisasi input (text, mention, media metadata) sebelum diproses.
-- Tambahkan guard untuk edge-case umum:
-  - message kosong
-  - command tanpa argumen wajib
-  - user/group tidak terdaftar
-  - rate limit / anti-spam trigger
-- Respons error ke user harus aman (jangan bocorkan stack trace/internal path).
+### 5.1 Penamaan File & Variabel
+
+| Konteks                       | Konvensi           | Contoh                |
+|-------------------------------|--------------------|-----------------------|
+| File utility / helper         | `camelCase.js`     | `messageParser.js`    |
+| File class / constructor      | `PascalCase.js`    | (ikuti pola file lama)|
+| Folder                        | Ikuti pola existing| `Components/`         |
+| File test                     | `*.test.js`        | `economy.test.js`     |
+| Variabel & fungsi             | `camelCase`        | `parseMessage()`      |
+| Konstanta                     | `UPPER_SNAKE_CASE` | `MAX_RETRIES`         |
+
+> Konsistensi dengan file di sekitarnya lebih diutamakan daripada memaksa konvensi baru.
+
+### 5.2 Code Style
+
+- Tulis kode yang **clean, mudah dibaca, dan minim duplikasi**.
+- Gunakan `try/catch` untuk semua operasi async: handler command, request API, dan operasi file.
+- Pesan error harus menyebutkan konteks yang jelas — nama command atau nama fitur yang gagal.
+- Tulis komentar singkat bila ada fallback behavior yang tidak langsung terlihat dari kode.
+- **Dilarang menambahkan dependency baru tanpa konfirmasi user.**
+
+**Urutan import:**
+
+```js
+// 1. External libraries
+const axios = require('axios');
+
+// 2. Internal absolute/alias modules (jika ada)
+const config = require('@/config');
+
+// 3. Internal relative modules
+const db = require('../lib/database');
+```
 
 ---
 
-## 8) Data & Persistence Rules
+## 6. Aturan Bot WhatsApp & Telegram
 
-Karena proyek memakai JSON sebagai storage:
-
-- Selalu validasi shape data sebelum read/write.
-- Hindari write yang terlalu sering di jalur message high-frequency.
-- Gunakan operasi atomik/safe write jika utilitas project sudah menyediakannya.
-- Pastikan perubahan schema kompatibel mundur, atau sertakan migrasi sederhana.
-- Jangan menghapus data existing tanpa instruksi eksplisit.
+- Setiap perubahan pada modul bersama harus mempertimbangkan **kompatibilitas kedua platform**.
+- Jangan asumsikan format message WhatsApp dan Telegram identik — normalisasi input terlebih dahulu sebelum diproses.
+- Tambahkan guard untuk edge case berikut:
+  - Message kosong atau undefined
+  - Command tanpa argumen wajib
+  - User atau grup tidak terdaftar
+  - Rate limit / anti-spam trigger
+- Response error ke user harus aman — **jangan bocorkan stack trace atau path internal.**
 
 ---
 
-## 9) API & Integrasi Eksternal
+## 7. Data & Persistence
 
-- Semua pemanggilan API eksternal harus ditangani timeout + error handling.
-- Gunakan retry seperlunya; jangan retry tanpa batas.
+- Validasi shape data sebelum setiap operasi read/write.
+- Hindari write berulang di jalur message high-frequency.
+- Gunakan operasi safe write / atomik bila sudah tersedia di utility project.
+- Setiap perubahan schema harus kompatibel mundur, atau disertai migrasi sederhana.
+- **Dilarang menghapus data existing tanpa instruksi eksplisit.**
+
+---
+
+## 8. API & Integrasi Eksternal
+
+- Setiap pemanggilan API eksternal wajib memiliki **timeout dan error handling**.
+- Implementasikan retry bila diperlukan — jangan retry tanpa batas.
 - Jangan expose raw error dari third-party ke pengguna akhir.
-- Endpoint, key, dan credential harus dari environment variables.
+- Semua endpoint, API key, dan credential harus dibaca dari **environment variables**.
 
-Format respons internal yang disarankan untuk helper service:
+**Format respons internal yang disarankan untuk helper service:**
 
 ```js
 { success: boolean, data: any | null, message: string }
@@ -141,94 +145,109 @@ Format respons internal yang disarankan untuk helper service:
 
 ---
 
-## 10) Testing Guidelines
+## 9. Security
 
-Prioritas pengujian:
+- Jangan commit file `.env`, secret, atau credential apapun.
+- Jangan log token sesi WhatsApp atau Telegram.
+- Jangan expose API key di pesan chat atau output apapun.
+- Validasi semua input user sebelum diproses, terutama pada command sensitif.
+- Batasi operasi berisiko (`eval`, shell command, akses file sistem) dengan guard yang ketat.
+
+---
+
+## 10. Testing
+
+**Prioritas pengujian:**
 
 1. Utility function di `lib/`
 2. Business logic command di `lib/Components/`
-3. Parser/serializer dan handling error
+3. Parser, serializer, dan error handling
 
-Checklist minimal sebelum menyelesaikan task:
+**Checklist wajib sebelum task dianggap selesai:**
 
-- Jalankan test relevan terhadap modul yang diubah.
-- Jika test tidak ada, lakukan sanity check runtime/lint yang relevan.
-- Jangan klaim test pass bila command tidak dijalankan.
-
----
-
-## 11) Security Rules
-
-- Jangan commit file `.env` / secret / credential.
-- Jangan log token sesi WhatsApp/Telegram.
-- Jangan expose API key ke pesan chat/user response.
-- Validasi input user untuk mencegah abuse pada command sensitif.
-- Batasi operasi berisiko (eval, shell command, file access) dengan guard ketat.
+- [ ] Test relevan sudah dijalankan terhadap modul yang diubah.
+- [ ] Jika belum ada test, lakukan sanity check via lint atau runtime.
+- [ ] Jangan klaim test *pass* jika command belum benar-benar dijalankan.
 
 ---
 
-## 12) Git Rules
+## 11. Git
 
-Setiap task yang selesai dikerjakan Jules harus diakhiri commit yang spesifik.
+**Format commit message:**
 
-Format commit:
+```
+feat:     Fitur baru
+fix:      Perbaikan bug
+refactor: Perubahan kode tanpa mengubah behavior
+style:    Formatting, whitespace, tidak ada logic change
+docs:     Perubahan dokumentasi
+test:     Penambahan atau perbaikan test
+chore:    Maintenance, dependency update, config
+```
 
-- `feat: ...`
-- `fix: ...`
-- `refactor: ...`
-- `style: ...`
-- `docs: ...`
-- `test: ...`
-- `chore: ...`
+**Aturan commit:**
 
-Aturan tambahan:
-
-- Satu commit fokus pada satu perubahan yang jelas.
-- Jangan campur refactor besar dengan fix kecil yang tidak terkait.
-- Pastikan `git diff` bersih dari file rahasia/sementara sebelum commit.
-
----
-
-## 13) Do Not
-
-Jika instruksi user ambigu, **klarifikasi dulu** sebelum implementasi.
-
-Jules dilarang:
-
-- Membuat folder baru tanpa konfirmasi.
-- Menggunakan framework bot whatsapp lain selain @itsliaaa/baileys
-- Menghapus/memindahkan file tanpa konfirmasi.
-- Menginstal package baru tanpa konfirmasi.
-- Mengubah fitur yang sudah berjalan tanpa instruksi jelas.
-- Menjalankan aksi destruktif ke data production.
-- Membocorkan kredensial dalam kode, log, atau output.
+- Satu commit = satu perubahan yang fokus dan jelas.
+- Jangan campur refactor besar dengan fix kecil yang tidak berkaitan.
+- Pastikan `git diff` bersih dari file rahasia atau file sementara sebelum commit.
 
 ---
 
-## 14) Definition of Done (DoD) untuk Jules
+## 12. Larangan
 
-Task dianggap selesai jika:
+Jika instruksi user ambigu, **klarifikasi dulu sebelum mengimplementasikan apapun.**
 
-1. Perubahan sesuai permintaan user.
-2. Tidak melanggar aturan AGENTS.md.
-3. Validasi/test relevan sudah dijalankan (atau disebutkan limitasinya secara jujur).
-4. Commit sudah dibuat dengan message yang benar.
+Jules dilarang keras:
+
+- Membuat folder baru tanpa konfirmasi user.
+- Menggunakan WhatsApp framework selain `@itsliaaa/baileys`.
+- Menghapus atau memindahkan file tanpa konfirmasi user.
+- Menginstall package baru tanpa konfirmasi user.
+- Mengubah fitur yang sudah berjalan tanpa instruksi yang jelas.
+- Menjalankan aksi destruktif terhadap data production.
+- Menyimpan atau mengekspos kredensial dalam bentuk apapun — kode, log, maupun output.
+
+---
+
+## 13. Definition of Done
+
+Task dianggap **selesai** jika memenuhi semua kriteria berikut:
+
+1. Perubahan sesuai dengan permintaan user.
+2. Tidak ada pelanggaran terhadap aturan di AGENTS.md ini.
+3. Validasi atau test relevan sudah dijalankan — atau limitasinya disebutkan secara jujur.
+4. Commit sudah dibuat dengan format yang benar.
 5. Ringkasan perubahan jelas dan dapat ditelusuri.
 
 ---
 
-## 15) Additional task 
+## 14. Post-Task
 
-Setelah semua tugas yang diberikan sudah selesai, lakukan tugas tambahan berikut:
+Setelah seluruh task selesai, **dua langkah berikut wajib dilakukan** sebelum benar-benar mengakhiri sesi:
 
-1. Kirim pesan ke webhook `https://webhook.notifine.com/beep/RcWM02gS` yang menjelaskan tentang perubahan apa saja yang sudah kamu lakukan. Contoh:
+### 14.1 Kirim Notifikasi Webhook
+
+Kirim POST request ke endpoint berikut:
+
 ```
-Halo, Saya Jules!
-
-Saya ingin memberitahukan bahwa tugas yang anda berikan mengenai bla bla bla sudah saya selesaikan.
-
-*jelaskan perubahan yang dilakukan
-*improvisasikan pesan dengan menambahkan informasi tambahan dan emoji
+https://webhook.notifine.com/beep/RcWM02gS
 ```
 
-2. Catat dan perbarui MEMORY.md dengan setiap informasi baru yang kamu dapatkan dari pengalamanmu melakukan perubahan terhadap codebase.
+Isi pesan harus menjelaskan perubahan yang dilakukan. Gunakan format berikut sebagai panduan:
+
+```
+Halo, saya Jules!
+
+Tugas mengenai [topik singkat] sudah selesai dikerjakan.
+
+Perubahan yang dilakukan:
+• [perubahan 1]
+• [perubahan 2]
+• ...
+
+[Tambahkan konteks relevan dan emoji secukupnya]
+```
+
+### 14.2 Perbarui MEMORY.md
+
+Catat setiap informasi baru yang diperoleh dari sesi ini ke dalam `MEMORY.md` — termasuk keputusan teknis, pola yang ditemukan, atau hal-hal yang perlu diingat untuk sesi berikutnya.
