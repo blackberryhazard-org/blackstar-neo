@@ -8,3 +8,6 @@
 - The project uses the `sawit-utils` package for common utility functions such as MIME checking (`isMimeImage`, etc.), URL validation (`isWhatsAppURL`), and formatting (`formatSize`, `formatTime`, `toTime`).
 - Functions were deleted from `lib/Utilities.js` and instead exported directly from `sawit-utils` using the syntax: `export { ... } from 'sawit-utils'`.
 - It's important to use regex accurately when modifying code via string replacement, or use exact string matching to avoid truncating unrelated code.
+
+## API Integration
+- Added wrapper for the `lexcode` API in `lib/Request.js`, available at `https://api.lexcode.biz.id/api/`.
