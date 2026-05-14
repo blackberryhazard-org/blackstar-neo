@@ -21,7 +21,7 @@
     "p-queue": "^9.1.2",
     "pino": "^10.3.1",
     "qrcode": "~1.5.4",
-    "sawit-utils": "^0.1.0",
+    "sawit-utils": "^0.2.0",
     "telegraf": "^4.16.3",
     "yt-search": "^2.13.1"
   }
