@@ -12,7 +12,7 @@ import { playStoreSearchCommand } from "../commands/search/playstore.js";
 import { pinterestSearchCommand } from "../commands/search/pin.js";
 import { tiktokSearch } from "../commands/search/ttsearch.js";
 import { ytPlayCommand } from "../commands/downloader/ytplay.js";
-import { tiktokCache } from "../index.js";
+import { tiktokCache } from "../cache.js";
 
 export async function handleCallback(bot, query, totalCommands, botStartTime) {
   const chatId = query.message.chat.id;

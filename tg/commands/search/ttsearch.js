@@ -1,5 +1,5 @@
 import axios from "axios";
-import { tiktokCache } from "../../index.js";
+import { tiktokCache } from "../../cache.js";
 
 export async function tiktokSearch(bot, chatId, query) {
   try {
