@@ -28,3 +28,5 @@
 * Bug Fixes: Applied safe coercion to `escapeHtml` in AI helpers, standardized `githubStalk` helper to return explicit `{ success, data, message }` responses, secured Telegram Stars `/topup` implementation by taking the amount directly from the API rather than the insecure user-controlled payload, and extended middleware coverage safely over `callback_query` updates using optional chaining.
 
 * Configuration: The Telegram commands now directly rely on `global.*` properties populated by `load_globals.js` from the root `config.js`, eliminating duplicate `settings.js` configurations and keeping them synced with the WhatsApp bot.
+
+* Architecture: Added `messageLogger` execution inside Telegram's middleware (`tg/socket.js`) to ensure both WhatsApp and Telegram events print uniform connection/chat logs in the console.

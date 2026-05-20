@@ -48,6 +48,24 @@ const startTelegramBot = async (config) => {
   bot.context.config = config;
 
   // Middlewares
+
+  bot.use(async (ctx, next) => {
+    if (ctx.message) {
+      const { messageLogger } = await import("../lib/Utilities.js");
+
+      const logMessage = {
+        type: "Telegram",
+        sender: String(ctx.from?.id),
+        pushName: ctx.from?.first_name || ctx.from?.username || "Unknown",
+        chat: String(ctx.chat?.id),
+        body: ctx.message.text || "(Media/Non-text)"
+      };
+
+      messageLogger(logMessage);
+    }
+    await next();
+  });
+
   bot.use(forceSubscribeMiddleware(config.tgbot.newsletterId));
   bot.use(roleLimitMiddleware(db, config));
 
