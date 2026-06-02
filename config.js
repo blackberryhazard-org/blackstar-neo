@@ -1,6 +1,15 @@
 import { LRUCache } from "lru-cache";
 import { cpus } from "os";
 
+// Load secrets from .env (Node native, no dependency). Optional: falls back to
+// defaults below when .env is absent or a variable is unset.
+try {
+  process.loadEnvFile();
+} catch {
+  // No .env file present — rely on process.env / defaults.
+}
+
+const env = process.env;
 const CPU_COUNT = cpus().length;
 
 const wabot = {
@@ -13,8 +22,8 @@ const wabot = {
   defaultLimit: 15,
   stickerPackName: "📦 Sakurabot Sticker",
   stickerPackPublisher: "GitHub: indra87g",
-  apiUser: "",
-  apiSecret: "",
+  apiUser: env.SIGHTENGINE_API_USER ?? "",
+  apiSecret: env.SIGHTENGINE_API_SECRET ?? "",
   localTimezone: "Asia/Jakarta",
   botThumbnail: "./media/Image/thumbnail.jpg",
   botMenuMusic: "./media/Audio/music.mp3",
@@ -43,12 +52,13 @@ const tgbot = {
   ownerId: "OWNER_ID",
   newsletterId: "NEWSLETTER_ID",
   botname: "BOT_NAME",
-  botfatherToken: "BOTFATHER_TOKEN",
+  botfatherToken: env.TELEGRAM_BOT_TOKEN ?? "BOTFATHER_TOKEN",
 };
 
 const misc = {
   pluginsFolder: "wa/plugins",
-  geminiApiKey: "GEMINI_APIKEY",
+  geminiApiKey: env.GEMINI_API_KEY ?? "GEMINI_APIKEY",
+  julesApiKey: env.JULES_API_KEY ?? "",
 };
 
 export default { wabot, tgbot, misc };
