@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { shuffleArray } from "../../../lib/Utilities.js";
 
 export default {
@@ -10,7 +10,7 @@ export default {
       if (!text)
         return m.reply(`👉🏻 *Example*: ${isPrefix + command} Fern x Stark`);
       m.react("🕒");
-      const data = await nexray("search/pinterest", {
+      const data = await api.nexray("search/pinterest", {
         q: text,
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

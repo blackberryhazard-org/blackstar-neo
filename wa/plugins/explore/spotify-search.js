@@ -1,6 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
 
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import { fetchAsBuffer, frame, toTime } from "../../../lib/Utilities.js";
 
 export default {
@@ -15,7 +15,7 @@ export default {
         if (!result) return m.reply(`❌ Invalid input.`);
         m.react("🕒");
         const trackUrl = "https://open.spotify.com/track/" + result.id;
-        const data = await zenzxz("download/spotify", {
+        const data = await api.zenzxz("download/spotify", {
           url: trackUrl,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -48,7 +48,7 @@ export default {
         if (!text)
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} heat abnormal`);
         m.react("🕒");
-        const data = await zenzxz("search/spotify", {
+        const data = await api.zenzxz("search/spotify", {
           q: text,
         });
         if (!data.status || !data.result?.success)

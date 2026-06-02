@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "mediafire",
@@ -12,7 +12,7 @@ export default {
         );
       if (!args[0].includes("mediafire.com")) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/mediafire", {
+      const data = await api.nexray("downloader/mediafire", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

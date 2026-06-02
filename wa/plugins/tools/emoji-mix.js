@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "emojimix",
@@ -10,7 +10,7 @@ export default {
       if (!emoji1 || !emoji2)
         return m.reply(`👉🏻 *Example*: ${isPrefix + command} 😁+😆`);
       m.react("🕒");
-      const data = await nexray("tools/emojimix", {
+      const data = await api.nexray("tools/emojimix", {
         emoji1,
         emoji2,
       });

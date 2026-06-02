@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeImage, resizeImage } from "../../../lib/Utilities.js";
 
@@ -13,7 +13,7 @@ export default {
       m.react("🕒");
       const buffer = await resizeImage(await q.download(), 720, null);
       const upload = await uguu(buffer);
-      const data = await nexray("editor/wanted", {
+      const data = await api.nexray("editor/wanted", {
         url: upload,
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

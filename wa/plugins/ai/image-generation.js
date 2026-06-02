@@ -1,4 +1,11 @@
-import { nekolabs } from "sawit-utils";
+import { api } from "sawit-utils";
+
+const nekolabs = (path = "", params = {}, options) =>
+  api.request(
+    `https://rynekoo-api.hf.space/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
+
 import { resizeImage } from "../../../lib/Utilities.js";
 
 export default {

@@ -1,4 +1,11 @@
-import { faa, nexray } from "sawit-utils";
+import { api } from "sawit-utils";
+
+const faa = (path = "", params = {}, options) =>
+  api.request(
+    `https://api-faa.my.id/faa/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
+
 import { uguu } from "../../../lib/Scraper.js";
 import {
   bratSticker,
@@ -11,7 +18,8 @@ export default {
   category: "maker",
   async run(m, { sock, isPrefix, command, text }) {
     try {
-      if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} i'm here`);
+      if (!text)
+        return m.reply(`👉🏻 *Example*: ${isPrefix + command} i'm here`);
       if (text.length > 150) return m.reply("❌ Maximum 150 characters.");
       m.react("🕒");
       const isImage = command === "brathd";

@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { frame, resizeImage } from "../../../lib/Utilities.js";
 
 export default {
@@ -41,9 +41,10 @@ export default {
             audio: true,
           });
       } else {
-        if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} nature`);
+        if (!text)
+          return m.reply(`👉🏻 *Example*: ${isPrefix + command} nature`);
         m.react("🕒");
-        const data = await nexray("search/tiktokphoto", {
+        const data = await api.nexray("search/tiktokphoto", {
           q: text,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");

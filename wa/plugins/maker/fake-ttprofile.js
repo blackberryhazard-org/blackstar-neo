@@ -1,4 +1,4 @@
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { fetchAsBuffer, randomInteger } from "../../../lib/Utilities.js";
 
@@ -25,7 +25,7 @@ export default {
       if (mimetype) profilePicture = await q.download();
       else profilePicture = await sock.profilePicture(m.sender);
       const upload = await uguu(await fetchAsBuffer(profilePicture));
-      const data = await zenzxz("maker/faketiktok", {
+      const data = await api.zenzxz("maker/faketiktok", {
         name,
         username,
         following,

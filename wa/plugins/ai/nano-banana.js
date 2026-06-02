@@ -1,4 +1,11 @@
-import { faa } from "sawit-utils";
+import { api } from "sawit-utils";
+
+const faa = (path = "", params = {}, options) =>
+  api.request(
+    `https://api-faa.my.id/faa/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
+
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeImage } from "../../../lib/Utilities.js";
 
@@ -12,7 +19,9 @@ export default {
       if (!isMimeImage(mimetype))
         return m.reply("💭 Provide an image to edit it.");
       if (!text)
-        return m.reply(`👉🏻 *Example*: ${isPrefix + command} add eye glasses!`);
+        return m.reply(
+          `👉🏻 *Example*: ${isPrefix + command} add eye glasses!`,
+        );
       m.react("🕒");
       const upload = await uguu(await q.download());
       const data = await faa("nano-banana", {

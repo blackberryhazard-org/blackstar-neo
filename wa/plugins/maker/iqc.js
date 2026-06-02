@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "iqc",
@@ -7,7 +7,7 @@ export default {
     try {
       if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} hello`);
       m.react("🕒");
-      const data = await nexray("maker/iqc", {
+      const data = await api.nexray("maker/iqc", {
         text,
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

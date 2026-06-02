@@ -1,4 +1,10 @@
-import { nekolabs } from "sawit-utils";
+import { api } from "sawit-utils";
+
+const nekolabs = (path = "", params = {}, options) =>
+  api.request(
+    `https://rynekoo-api.hf.space/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
 
 export default {
   command: "pin",

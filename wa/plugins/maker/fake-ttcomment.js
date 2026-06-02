@@ -1,4 +1,4 @@
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { fetchAsBuffer } from "../../../lib/Utilities.js";
 
@@ -19,7 +19,7 @@ export default {
       if (mimetype) profilePicture = await q.download();
       else profilePicture = await sock.profilePicture(m.sender);
       const upload = await uguu(await fetchAsBuffer(profilePicture));
-      const data = await zenzxz("maker/fakettcomment", {
+      const data = await api.zenzxz("maker/fakettcomment", {
         url: upload,
         username,
         comment,

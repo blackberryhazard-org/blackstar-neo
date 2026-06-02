@@ -1,6 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
 
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: ["tiktok", "tikwm", "ttmp3", "ttvn"],
@@ -14,7 +14,7 @@ export default {
         );
       if (!args[0].includes("tiktok.com")) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await zenzxz("download/tiktok", {
+      const data = await api.zenzxz("download/tiktok", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

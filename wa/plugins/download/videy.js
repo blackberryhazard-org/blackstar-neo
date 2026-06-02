@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "videy",
@@ -11,7 +11,7 @@ export default {
         );
       if (!args[0].includes("videy.co")) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/videy", {
+      const data = await api.nexray("downloader/videy", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

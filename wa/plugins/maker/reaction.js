@@ -1,5 +1,5 @@
+import { api } from "sawit-utils";
 import { REACTION_TEXTS } from "../../../lib/Constants.js";
-import { request } from "sawit-utils";
 
 export default {
   command: Object.keys(REACTION_TEXTS),
@@ -8,7 +8,7 @@ export default {
     try {
       m.react("🕒");
       const path = command === "kicked" ? "kick" : command;
-      const data = await request(`https://api.waifu.pics/sfw/${path}`);
+      const data = await api.request(`https://api.waifu.pics/sfw/${path}`);
       if (!data?.url) return m.reply("❌ Failed to get data.");
       const userId = m.quoted?.sender || m.mentionedJid[0];
       const message = REACTION_TEXTS[command];

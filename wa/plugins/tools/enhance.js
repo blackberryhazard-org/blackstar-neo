@@ -1,4 +1,11 @@
-import { faa, nexray } from "sawit-utils";
+import { api } from "sawit-utils";
+
+const faa = (path = "", params = {}, options) =>
+  api.request(
+    `https://api-faa.my.id/faa/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
+
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeImage, isMimeVideo } from "../../../lib/Utilities.js";
 

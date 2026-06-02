@@ -1,20 +1,20 @@
+import { api } from "sawit-utils";
 import ytsearch from "yt-search";
-
-import { nexray } from "sawit-utils";
 
 export default {
   command: ["playvideo", "ptv"],
   category: "explore",
   async run(m, { sock, isPrefix, command, text }) {
     try {
-      if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} mayonaka`);
+      if (!text)
+        return m.reply(`👉🏻 *Example*: ${isPrefix + command} mayonaka`);
       m.react("🕒");
       const data = await ytsearch(text);
       if (!data.all?.length) return m.reply("❌ Failed to get data.");
       const firstVideo = data.all[0];
       if (firstVideo.seconds > 1440)
         return m.reply("❌ Video is too long. Maximum duration is 24 minutes.");
-      const videoData = await nexray("downloader/v1/ytmp4", {
+      const videoData = await api.nexray("downloader/v1/ytmp4", {
         url: firstVideo.url,
       });
       if (!videoData.status) return m.reply("❌ Failed to get data.");

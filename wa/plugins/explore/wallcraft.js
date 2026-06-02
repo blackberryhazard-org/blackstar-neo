@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { frame } from "../../../lib/Utilities.js";
 
 export default {
@@ -14,9 +14,10 @@ export default {
         m.react("🕒");
         sock.sendMedia(m.chat, result.url, result.description, m);
       } else {
-        if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} nature`);
+        if (!text)
+          return m.reply(`👉🏻 *Example*: ${isPrefix + command} nature`);
         m.react("🕒");
-        const data = await nexray("search/wallcraft", {
+        const data = await api.nexray("search/wallcraft", {
           q: text,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");

@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeImage } from "../../../lib/Utilities.js";
 
@@ -13,7 +13,7 @@ export default {
         return m.reply("💭 Provide an image to remove background.");
       m.react("🕒");
       const upload = await uguu(await q.download());
-      const data = await nexray("tools/colorize", {
+      const data = await api.nexray("tools/colorize", {
         url: upload,
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

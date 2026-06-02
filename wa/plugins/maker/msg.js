@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "msg",
@@ -9,7 +9,7 @@ export default {
       if (!text)
         return m.reply(`👉🏻 *Example*: ${isPrefix + command} hello | Notify`);
       m.react("🕒");
-      const data = await nexray("maker/msg", {
+      const data = await api.nexray("maker/msg", {
         message,
         title,
         icon,

@@ -1,4 +1,4 @@
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import {
   fetchAsBuffer,
   formatNumber,
@@ -17,7 +17,7 @@ export default {
             `👉🏻 *Example*: ${isPrefix + command} 1355400581027729428`,
           );
         m.react("🕒");
-        const data = await zenzxz("stalker/discord", {
+        const data = await api.zenzxz("stalker/discord", {
           id: args[0],
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -43,7 +43,7 @@ export default {
         if (!args[0])
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} 16207002`);
         m.react("🕒");
-        const data = await zenzxz("stalker/ffstalk", {
+        const data = await api.zenzxz("stalker/ffstalk", {
           id: args[0],
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -77,7 +77,7 @@ export default {
         if (!args[0])
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} instagram`);
         m.react("🕒");
-        const data = await zenzxz("stalker/instagram", {
+        const data = await api.zenzxz("stalker/instagram", {
           username: args[0],
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -114,7 +114,7 @@ export default {
         if (!args[0])
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} builderman`);
         m.react("🕒");
-        const data = await zenzxz("stalker/roblox", {
+        const data = await api.zenzxz("stalker/roblox", {
           user: args[0],
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -143,7 +143,7 @@ export default {
         if (!args[0])
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} khaby.lame`);
         m.react("🕒");
-        const data = await zenzxz("stalker/tiktok", {
+        const data = await api.zenzxz("stalker/tiktok", {
           username: args[0],
         });
         if (!data.status) return m.reply("❌ Failed to get data.");

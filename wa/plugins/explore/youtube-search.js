@@ -1,8 +1,7 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
+import { api } from "sawit-utils";
 import ytsearch from "yt-search";
-
-import { nexray } from "sawit-utils";
-import { frame, formatNumber } from "../../../lib/Utilities.js";
+import { formatNumber, frame } from "../../../lib/Utilities.js";
 
 export default {
   command: "ytsearch",
@@ -22,7 +21,7 @@ export default {
           );
         const shouldAsAudio = command === "ytsa";
         const path = shouldAsAudio ? "ytmp3" : "v1/ytmp4";
-        const data = await nexray("downloader/" + path, {
+        const data = await api.nexray("downloader/" + path, {
           url: result.url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");

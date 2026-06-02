@@ -1,5 +1,12 @@
+import { api } from "sawit-utils";
 import { URL_EXTRACT_REGEX } from "../../../lib/Constants.js";
-import { nekolabs, nexray, zenzxz } from "sawit-utils";
+
+const nekolabs = (path = "", params = {}, options) =>
+  api.request(
+    `https://rynekoo-api.hf.space/${path}?${new URLSearchParams(params)}`,
+    options,
+  );
+
 import { instagram } from "../../../lib/Scraper.js";
 import { isURL, resizeImage } from "../../../lib/Utilities.js";
 
@@ -19,14 +26,14 @@ export default {
     try {
       if (url.includes("capcut.com")) {
         m.react("🕒");
-        const data = await nexray("downloader/capcut", {
+        const data = await api.nexray("downloader/capcut", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
         sock.sendMedia(m.chat, data.result.url, data.result.title, m);
       } else if (url.includes("douyin.com")) {
         m.react("🕒");
-        const data = await nexray("downloader/douyin", {
+        const data = await api.nexray("downloader/douyin", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -53,7 +60,7 @@ export default {
         sock.sendMedia(m.chat, videoContent.url, data.result.title, m);
       } else if (url.includes("facebook.")) {
         m.react("🕒");
-        const data = await nexray("downloader/facebook", {
+        const data = await api.nexray("downloader/facebook", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -65,7 +72,7 @@ export default {
         );
       } else if (url.includes("drive.google")) {
         m.react("🕒");
-        const data = await nexray("downloader/googledrive", {
+        const data = await api.nexray("downloader/googledrive", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -101,7 +108,7 @@ export default {
         );
       } else if (url.includes("mediafire.com")) {
         m.react("🕒");
-        const data = await nexray("downloader/mediafire", {
+        const data = await api.nexray("downloader/mediafire", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -117,7 +124,7 @@ export default {
         sock.sendMedia(m.chat, data.result.medias.at(-1).url, "", m);
       } else if (url.includes("open.spotify.com")) {
         m.react("🕒");
-        const data = await nexray("downloader/spotify", {
+        const data = await api.nexray("downloader/spotify", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -126,7 +133,7 @@ export default {
         });
       } else if (url.includes("tiktok.com")) {
         m.react("🕒");
-        const data = await zenzxz("download/tiktok", {
+        const data = await api.zenzxz("download/tiktok", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -154,7 +161,7 @@ export default {
         );
       } else if (url.includes("twitter.com") || url.includes("x.com")) {
         m.react("🕒");
-        const data = await nexray("downloader/twitter", {
+        const data = await api.nexray("downloader/twitter", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
@@ -179,14 +186,14 @@ export default {
         );
       } else if (url.includes("videy.co")) {
         m.react("🕒");
-        const data = await nexray("downloader/videy", {
+        const data = await api.nexray("downloader/videy", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
         sock.sendMedia(m.chat, data.result, "", m);
       } else if (url.includes("youtube.com") || url.includes("youtu.be")) {
         m.react("🕒");
-        const data = await nexray("downloader/v1/ytmp4", {
+        const data = await api.nexray("downloader/v1/ytmp4", {
           url,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");
