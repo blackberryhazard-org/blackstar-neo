@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "spotify",
@@ -12,7 +12,7 @@ export default {
       if (!args[0].includes("open.spotify.com"))
         return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/spotify", {
+      const data = await api.nexray("downloader/spotify", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

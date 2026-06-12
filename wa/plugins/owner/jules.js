@@ -1,4 +1,4 @@
-import { request } from "sawit-utils";
+import { api } from "sawit-utils";
 import config from "../../../config.js";
 
 export default {
@@ -36,7 +36,7 @@ export default {
 
     try {
       if (action === "sources") {
-        const data = await request(`${baseUrl}/sources`, { headers });
+        const data = await api.request(`${baseUrl}/sources`, { headers });
         if (data.sources && data.sources.length > 0) {
           let printStr = "✅ *Available Sources:*\n";
           data.sources.forEach((s, i) => {
@@ -55,7 +55,7 @@ export default {
         const source = args[1];
         const prompt = args.slice(2).join(" ");
 
-        const data = await request(`${baseUrl}/sessions`, {
+        const data = await api.request(`${baseUrl}/sessions`, {
           method: "POST",
           body: JSON.stringify({
             prompt,
@@ -68,7 +68,7 @@ export default {
           `✅ Successfully created new session.\n*Session ID*: ${id}\n*Source*: ${source}`,
         );
       } else if (action === "show") {
-        const data = await request(`${baseUrl}/sessions?pageSize=5`, {
+        const data = await api.request(`${baseUrl}/sessions?pageSize=5`, {
           headers,
         });
         if (data.sessions && data.sessions.length > 0) {
@@ -88,7 +88,7 @@ export default {
             `👉🏻 *Example*: ${isPrefix + command} approve SESSION_ID`,
           );
         const sessionId = args[1];
-        await request(`${baseUrl}/sessions/${sessionId}:approvePlan`, {
+        await api.request(`${baseUrl}/sessions/${sessionId}:approvePlan`, {
           method: "POST",
           headers,
         });
@@ -99,7 +99,7 @@ export default {
             `👉🏻 *Example*: ${isPrefix + command} activities SESSION_ID`,
           );
         const sessionId = args[1];
-        const data = await request(
+        const data = await api.request(
           `${baseUrl}/sessions/${sessionId}/activities?pageSize=5`,
           { headers },
         );
@@ -126,7 +126,7 @@ export default {
           );
         const sessionId = args[1];
         const prompt = args.slice(2).join(" ");
-        await request(`${baseUrl}/sessions/${sessionId}:sendMessage`, {
+        await api.request(`${baseUrl}/sessions/${sessionId}:sendMessage`, {
           method: "POST",
           body: JSON.stringify({ prompt }),
           headers,

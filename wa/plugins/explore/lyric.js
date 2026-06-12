@@ -1,4 +1,4 @@
-import { deline } from "sawit-utils";
+import { api } from "sawit-utils";
 import { frame } from "../../../lib/Utilities.js";
 
 export default {
@@ -17,7 +17,7 @@ export default {
         if (!text)
           return m.reply(`👉🏻 *Example*: ${isPrefix + command} Army dreamers`);
         m.react("🕒");
-        const data = await deline("tools/lyrics", {
+        const data = await api.deline("tools/lyrics", {
           title: text,
         });
         if (!data.status) return m.reply("❌ Failed to get data.");

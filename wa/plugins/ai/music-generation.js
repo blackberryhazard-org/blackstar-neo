@@ -1,6 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
 
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import { fetchAsBuffer } from "../../../lib/Utilities.js";
 
 export default {
@@ -15,7 +15,7 @@ export default {
           `👉🏻 *Example*: ${isPrefix + command} [Verse]\nI watch you from a quiet place\nEvery smile I try to trace\n\n[Chorus]\nBrother, you’re my only light\nToo close, but never in sight | Close to You | Acoustic`,
         );
       m.react("🕒");
-      const data = await zenzxz("ai/songgenlyrics", undefined, {
+      const data = await api.zenzxz("ai/songgenlyrics", undefined, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

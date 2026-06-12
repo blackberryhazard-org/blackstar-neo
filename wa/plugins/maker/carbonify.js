@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "carbonify",
@@ -10,7 +10,7 @@ export default {
           `👉🏻 *Example*: ${isPrefix + command} console.log('Starseed')`,
         );
       m.react("🕒");
-      const data = await nexray("maker/codesnap", {
+      const data = await api.nexray("maker/codesnap", {
         code,
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

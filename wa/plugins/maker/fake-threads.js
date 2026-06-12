@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { fetchAsBuffer, randomInteger } from "../../../lib/Utilities.js";
 
@@ -19,7 +19,7 @@ export default {
       if (mimetype) profilePicture = await q.download();
       else profilePicture = await sock.profilePicture(m.sender);
       const upload = await uguu(await fetchAsBuffer(profilePicture));
-      const data = await nexray("maker/fakethreads", {
+      const data = await api.nexray("maker/fakethreads", {
         username,
         text: caption,
         avatar: upload,

@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { isURL } from "../../../lib/Utilities.js";
 
 export default {
@@ -13,7 +13,7 @@ export default {
         );
       if (!isURL(args[0])) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/facebook", {
+      const data = await api.nexray("downloader/facebook", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "emojito",
@@ -8,7 +8,7 @@ export default {
     try {
       if (!args[0]) return m.reply(`👉🏻 *Example*: ${isPrefix + command} 😁`);
       m.react("🕒");
-      const data = await nexray("tools/emojigif", {
+      const data = await api.nexray("tools/emojigif", {
         emoji: args[0],
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

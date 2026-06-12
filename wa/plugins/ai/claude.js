@@ -1,4 +1,4 @@
-import { lexcode } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: ["claude"],
@@ -8,11 +8,12 @@ export default {
       if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} hello`);
       m.react("🕒");
 
-      const response = await lexcode("ai/claude-3-haiku", {
+      const response = await api.lexcode("ai/claude-3-haiku", {
         text,
       });
 
-      if (!response || !response.status) return m.reply("❌ Failed to get data.");
+      if (!response || !response.status)
+        return m.reply("❌ Failed to get data.");
       m.reply(response.result);
     } catch (error) {
       console.error(error);

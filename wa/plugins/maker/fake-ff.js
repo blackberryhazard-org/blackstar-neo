@@ -1,13 +1,14 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "fakeff",
   category: "maker",
   async run(m, { sock, isPrefix, command, text }) {
     try {
-      if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} itsliaaa`);
+      if (!text)
+        return m.reply(`👉🏻 *Example*: ${isPrefix + command} itsliaaa`);
       m.react("🕒");
-      const data = await nexray("maker/fakelobyff", {
+      const data = await api.nexray("maker/fakelobyff", {
         nickname: text,
       });
       if (!Buffer.isBuffer(data)) return m.reply("❌ Failed to get data.");

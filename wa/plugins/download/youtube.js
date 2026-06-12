@@ -1,6 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
 
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { isURL } from "../../../lib/Utilities.js";
 
 export default {
@@ -17,7 +17,7 @@ export default {
       m.react("🕒");
       const shouldAsAudio = command === "ytmp3" || command === "yta";
       const path = shouldAsAudio ? "ytmp3" : "v1/ytmp4";
-      const data = await nexray("downloader/" + path, {
+      const data = await api.nexray("downloader/" + path, {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

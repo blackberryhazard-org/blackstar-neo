@@ -1,4 +1,4 @@
-import { deline } from "sawit-utils";
+import { api } from "sawit-utils";
 import { randomInteger } from "../../../lib/Utilities.js";
 
 export default {
@@ -12,7 +12,7 @@ export default {
           `👉🏻 *Example*: ${isPrefix + command} brother!? | itsliaaa`,
         );
       m.react("🕒");
-      const data = await deline("maker/fake-xnxx", {
+      const data = await api.deline("maker/fake-xnxx", {
         name,
         quote: caption,
         likes: randomInteger(100, 1000),

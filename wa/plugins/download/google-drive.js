@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: "gdrive",
@@ -11,7 +11,7 @@ export default {
         );
       if (!args[0].includes("drive.google")) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/googledrive", {
+      const data = await api.nexray("downloader/googledrive", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

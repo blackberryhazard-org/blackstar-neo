@@ -1,4 +1,4 @@
-import { deline } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeImage } from "../../../lib/Utilities.js";
 
@@ -16,7 +16,7 @@ export default {
         return m.reply(`👉🏻 *Example*: ${isPrefix + command} nice | gurl`);
       m.react("🕒");
       const upload = await uguu(await q.download());
-      const data = await deline("maker/smeme", {
+      const data = await api.deline("maker/smeme", {
         top,
         bottom,
         image: upload,

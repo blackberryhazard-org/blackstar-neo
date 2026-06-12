@@ -1,4 +1,4 @@
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 import { uguu } from "../../../lib/Scraper.js";
 import { isMimeWebP, resizeImage } from "../../../lib/Utilities.js";
 
@@ -17,7 +17,7 @@ export default {
       const isNeedVideoConvert = command === "tovid" || command === "tovideo";
       if (isNeedVideoConvert) {
         const upload = await uguu(buffer);
-        data = await nexray("tools/converter", {
+        data = await api.nexray("tools/converter", {
           url: upload,
           format: "mp4",
         });

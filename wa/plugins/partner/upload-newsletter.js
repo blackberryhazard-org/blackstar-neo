@@ -1,7 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
+import { api } from "sawit-utils";
 import ytsearch from "yt-search";
-
-import { nexray } from "sawit-utils";
 import {
   fetchAsBuffer,
   formatNumber,
@@ -38,7 +37,7 @@ export default {
       const data = await ytsearch(text);
       if (!data.all?.length) return m.reply("❌ Failed to get data.");
       const firstVideo = data.all[0];
-      const audioData = await nexray("downloader/ytmp3", {
+      const audioData = await api.nexray("downloader/ytmp3", {
         url: firstVideo.url,
       });
       if (!audioData.status) return m.reply("❌ Failed to get data.");
@@ -78,14 +77,15 @@ export default {
         context,
       );
     } else if (command === "playvidch" || command === "ptvch") {
-      if (!text) return m.reply(`👉🏻 *Example*: ${isPrefix + command} mayonaka`);
+      if (!text)
+        return m.reply(`👉🏻 *Example*: ${isPrefix + command} mayonaka`);
       m.react("🕒");
       const data = await ytsearch(text);
       if (!data.all?.length) return m.reply("❌ Failed to get data.");
       const firstVideo = data.all[0];
       if (firstVideo.seconds > 1440)
         return m.reply("❌ Video is too long. Maximum duration is 24 minutes.");
-      const videoData = await nexray("downloader/v1/ytmp4", {
+      const videoData = await api.nexray("downloader/v1/ytmp4", {
         url: firstVideo.url,
       });
       if (!videoData.status) return m.reply("❌ Failed to get data.");

@@ -1,4 +1,4 @@
-import { deline, nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: ["attp", "ttp"],

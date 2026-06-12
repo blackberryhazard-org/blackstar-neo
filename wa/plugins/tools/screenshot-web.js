@@ -1,4 +1,4 @@
-import { zenzxz } from "sawit-utils";
+import { api } from "sawit-utils";
 import { isURL } from "../../../lib/Utilities.js";
 
 export default {
@@ -12,7 +12,7 @@ export default {
         );
       if (!isURL(args[0])) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await zenzxz("tools/ssweb", {
+      const data = await api.zenzxz("tools/ssweb", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");

@@ -13,7 +13,7 @@
 |---------|------------------------|
 | Version | v0.1.0                 |
 | Status  | Active development     |
-| Runtime | Node.js (CommonJS)     |
+| Runtime | Node.js ≥ 22 — ESM (`"type": "module"`, gunakan `import`) |
 
 ---
 
@@ -22,11 +22,12 @@
 | Kategori           | Package / Tool          |
 |--------------------|-------------------------|
 | WhatsApp framework | `@itsliaaa/baileys`     |
-| Telegram framework | `telegraf`              |
+| Telegram framework | `telegraf-hardened`     |
 | HTTP client        | `axios`                 |
 | Storage            | JSON (flat file)        |
 | Package manager    | npm                     |
-| Testing            | vitest                  |
+| Lint & Format      | Biome (`@biomejs/biome`)|
+| Testing            | Node.js native test runner (`node --test`) |
 | Deployment         | HidenCloud (Pterodactyl)|
 
 ---
@@ -57,13 +58,13 @@
 ## 4. Commands
 
 ```bash
-npm run start        # Jalankan bot
-npm run lint         # Cek code style
-npm run format       # Format kode
-npm run test         # Jalankan semua test
-npm run test:unit    # Unit test saja
-npm run test:e2e     # End-to-end test saja
+npm start            # Jalankan bot (production: memory cap + GC, lihat package.json)
+npm run lint         # Cek code style & lint dengan Biome (read-only)
+npm run format       # Perbaiki & format kode dengan Biome (--write)
+npm test             # Jalankan semua test (*.test.js) via node --test
 ```
+
+> Catatan: hanya empat script di atas yang tersedia di `package.json`. Belum ada pemisahan `test:unit` / `test:e2e`.
 
 Jalankan command yang **paling relevan** dengan perubahan yang dilakukan. Tidak perlu menjalankan semuanya, tapi validasi minimal wajib dilakukan.
 
@@ -92,18 +93,18 @@ Jalankan command yang **paling relevan** dengan perubahan yang dilakukan. Tidak 
 - Tulis komentar singkat bila ada fallback behavior yang tidak langsung terlihat dari kode.
 - **Dilarang menambahkan dependency baru tanpa konfirmasi user.**
 
-**Urutan import:**
+**Urutan import** (ESM — proyek ini memakai `import`, bukan `require`):
 
 ```js
 // 1. External libraries
-const axios = require('axios');
+import axios from "axios";
 
-// 2. Internal absolute/alias modules (jika ada)
-const config = require('@/config');
-
-// 3. Internal relative modules
-const db = require('../lib/database');
+// 2. Internal relative modules
+import config from "../config.js";
+import { Database } from "../lib/Database.js";
 ```
+
+> `biome check` akan mengurutkan import secara otomatis (`organizeImports`). Selalu sertakan ekstensi `.js` pada import relatif.
 
 ---
 

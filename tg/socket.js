@@ -18,12 +18,11 @@ import { tiktokSearch } from "./commands/search/ttsearch.js";
 import { mediafireDownloader } from "./commands/downloader/mediafire.js";
 import { ytPlayCommand } from "./commands/downloader/ytplay.js";
 import { tiktokStalk } from "./commands/stalker/ttstalk.js";
-import { githubStalk, sendDeveloperInfo as devInfoAlias } from "./commands/dev.js";
+import { githubStalk } from "./commands/stalker/githubstalk.js";
 import { geminiCommand } from "./commands/ai/gemini.js";
 import { claudeCommand } from "./commands/ai/claude.js";
 
 import { forceSubscribeMiddleware, roleLimitMiddleware } from "./middleware.js";
-
 
 const startTelegramBot = async (config) => {
   if (
@@ -58,7 +57,7 @@ const startTelegramBot = async (config) => {
         sender: String(ctx.from?.id),
         pushName: ctx.from?.first_name || ctx.from?.username || "Unknown",
         chat: String(ctx.chat?.id),
-        body: ctx.message.text || "(Media/Non-text)"
+        body: ctx.message.text || "(Media/Non-text)",
       };
 
       messageLogger(logMessage);
@@ -68,7 +67,6 @@ const startTelegramBot = async (config) => {
 
   bot.use(forceSubscribeMiddleware(config.tgbot.newsletterId));
   bot.use(roleLimitMiddleware(db, config));
-
 
   const botStartTime = Date.now();
   const stats = { value: 0 };
@@ -81,24 +79,72 @@ const startTelegramBot = async (config) => {
     const text = ctx.message.text.trim().toLowerCase();
 
     if (text === "/dev") return await sendDeveloperInfo(bot, chatId);
-    if (text.startsWith("/gemini ")) return await geminiCommand(bot, chatId, ctx.message.text.replace("/gemini", "").trim());
-    if (text.startsWith("/claude ")) return await claudeCommand(bot, chatId, ctx.message.text.replace("/claude", "").trim());
-    if (text.startsWith("/ttsearch ")) return await tiktokSearch(bot, chatId, ctx.message.text.slice(10).trim());
-    if (text.startsWith("/ttstalk ")) return await tiktokStalk(bot, chatId, ctx.message.text.replace("/ttstalk", "").trim());
-    if (text.startsWith("/ghstalk ")) return await devInfoAlias(bot, chatId); // githubStalk is internal to dev.js, so we use sendDeveloperInfo for now since ghstalk directly uses sendDeveloperInfo logic or we update dev.js later, but the payload used githubStalk
+    if (text.startsWith("/gemini "))
+      return await geminiCommand(
+        bot,
+        chatId,
+        ctx.message.text.replace("/gemini", "").trim(),
+      );
+    if (text.startsWith("/claude "))
+      return await claudeCommand(
+        bot,
+        chatId,
+        ctx.message.text.replace("/claude", "").trim(),
+      );
+    if (text.startsWith("/ttsearch "))
+      return await tiktokSearch(bot, chatId, ctx.message.text.slice(10).trim());
+    if (text.startsWith("/ttstalk "))
+      return await tiktokStalk(
+        bot,
+        chatId,
+        ctx.message.text.replace("/ttstalk", "").trim(),
+      );
+    if (text.startsWith("/ghstalk "))
+      return await githubStalk(
+        bot,
+        chatId,
+        ctx.message.text.replace("/ghstalk", "").trim(),
+      );
     if (ctx.message.text.trim().startsWith("/tt")) {
       const args = ctx.message.text.trim().split(" ");
-      if (args.length >= 2) return await tiktokDownloader(bot, chatId, args.slice(1).join(" ").trim());
+      if (args.length >= 2)
+        return await tiktokDownloader(
+          bot,
+          chatId,
+          args.slice(1).join(" ").trim(),
+        );
     }
     if (ctx.message.text.trim().startsWith("/ytsearch")) {
       const args = ctx.message.text.trim().split(" ");
-      if (args.length >= 2) return await ytSearchCommand(bot, chatId, args.slice(1).join(" "));
+      if (args.length >= 2)
+        return await ytSearchCommand(bot, chatId, args.slice(1).join(" "));
     }
-    if (text.startsWith("/movie ")) return await movieSearchCommand(bot, chatId, ctx.message.text.slice(7).trim());
-    if (ctx.message.text.startsWith("/playstore ")) return await playStoreSearchCommand(bot, chatId, ctx.message.text.slice(11).trim());
-    if (ctx.message.text.startsWith("/pin ")) return await pinterestSearchCommand(bot, chatId, ctx.message.text.slice(5).trim());
-    if (text.startsWith("/mf ")) return await mediafireDownloader(bot, chatId, ctx.message.text.slice(4).trim());
-    if (text.startsWith("/ytplay ")) return await ytPlayCommand(bot, chatId, ctx.message.text.slice(8).trim());
+    if (text.startsWith("/movie "))
+      return await movieSearchCommand(
+        bot,
+        chatId,
+        ctx.message.text.slice(7).trim(),
+      );
+    if (ctx.message.text.startsWith("/playstore "))
+      return await playStoreSearchCommand(
+        bot,
+        chatId,
+        ctx.message.text.slice(11).trim(),
+      );
+    if (ctx.message.text.startsWith("/pin "))
+      return await pinterestSearchCommand(
+        bot,
+        chatId,
+        ctx.message.text.slice(5).trim(),
+      );
+    if (text.startsWith("/mf "))
+      return await mediafireDownloader(
+        bot,
+        chatId,
+        ctx.message.text.slice(4).trim(),
+      );
+    if (text.startsWith("/ytplay "))
+      return await ytPlayCommand(bot, chatId, ctx.message.text.slice(8).trim());
 
     switch (text) {
       case "/start":
@@ -180,7 +226,10 @@ const startTelegramBot = async (config) => {
 
       // Ensure user exists in db before crediting
       if (!db.hasUser(payerId)) {
-        db.updateUser(payerId, { premiumExpiry: 0, limit: config.wabot.defaultLimit || 15 });
+        db.updateUser(payerId, {
+          premiumExpiry: 0,
+          limit: config.wabot.defaultLimit || 15,
+        });
       }
 
       const { Economy } = await import("../lib/Components/Economy.js");

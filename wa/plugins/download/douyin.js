@@ -1,6 +1,6 @@
 import { isJidNewsletter } from "@itsliaaa/baileys";
 
-import { nexray } from "sawit-utils";
+import { api } from "sawit-utils";
 
 export default {
   command: ["douyin", "doump3", "douvn"],
@@ -13,7 +13,7 @@ export default {
         );
       if (!args[0].includes("douyin.com")) return m.reply("❌ Invalid URL.");
       m.react("🕒");
-      const data = await nexray("downloader/douyin", {
+      const data = await api.nexray("downloader/douyin", {
         url: args[0],
       });
       if (!data.status) return m.reply("❌ Failed to get data.");
