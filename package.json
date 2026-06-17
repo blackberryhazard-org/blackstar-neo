@@ -21,7 +21,9 @@
     "format": "biome check --write ."
   },
   "dependencies": {
+    "@hapi/boom": "^10.0.1",
     "@itsliaaa/baileys": "^0.3.17",
+    "pino": "^10.3.1",
     "telegraf-hardened": "^6.0.0"
   }
 }
