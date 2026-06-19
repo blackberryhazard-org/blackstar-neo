@@ -142,5 +142,7 @@ data/
 
 
 node_modules
-starseed_
-starseed.zip
+package-lock.json
+bun.lock
+bun.lockb
+pnpm-lock.yml
