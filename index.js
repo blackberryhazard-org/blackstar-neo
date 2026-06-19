@@ -7,12 +7,12 @@ const LOADER = fileURLToPath(new URL("./loader.js", import.meta.url));
 const BOT_CONFIGS = [
   {
     name: "Whatsapp Bot",
-    scriptPath: fileURLToPath(new URL("./wa/socket.js", import.meta.url)),
+    scriptPath: fileURLToPath(new URL("./wa/index.js", import.meta.url)),
     args: process.argv.slice(2)
   },
   {
     name: "Telegram Bot",
-    scriptPath: fileURLToPath(new URL("./tg/socket.js", import.meta.url)), 
+    scriptPath: fileURLToPath(new URL("./tg/index.js", import.meta.url)), 
     args: []
   }
 ];

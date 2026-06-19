@@ -23,7 +23,12 @@
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@itsliaaa/baileys": "^0.3.17",
+    "consola": "^3.4.2",
     "pino": "^10.3.1",
+    "sawit-utils": "github:indra87g/sawit-utils",
     "telegraf-hardened": "^6.0.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.5.0"
   }
 }
