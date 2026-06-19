@@ -6,7 +6,7 @@ const startTelegramBot = async () => {
 
   if (!token || token === "BOTFATHER_TOKEN") {
     console.log(
-      "⚠️ Telegram bot token not provided or is default. Skipping Telegram bot initialization."
+      "⚠️ Telegram bot token not provided or is default. Skipping Telegram bot initialization.",
     );
     return;
   }
