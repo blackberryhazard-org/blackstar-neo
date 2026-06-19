@@ -12,6 +12,9 @@ const system = {
     telegramBot: true,
     server: false,
   },
+  maxRAMUsage: 2000,
+  maxCrash: 5,
+  crashTimeout: 60000,
 };
 
 const wabot = {
@@ -25,4 +28,4 @@ const tgbot = {
   botfatherToken: env.TELEGRAM_BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
 };
 
-export default { wabot, tgbot };
+export default { system, wabot, tgbot };
