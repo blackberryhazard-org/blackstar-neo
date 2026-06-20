@@ -60,4 +60,6 @@ Edit [config.js](https://github.com/blackberryhazard-org/blackstar-neo/blob/main
 - [siakinnik](https://github.com/siakinnik) — Telegram Bot Library (`telegraf-hardened`)
 
 ## License
+This project is using Apache License 2.0 to respect the owner of `@itsliaaa/starseed`
+
 [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fblackberryhazard-org%2Fblackstar-neo.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fblackberryhazard-org%2Fblackstar?ref=badge_large)
