@@ -28,4 +28,9 @@ const tgbot = {
   botfatherToken: env.TELEGRAM_BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
 };
 
-export default { system, wabot, tgbot };
+const apikey = {
+  bayargg: env.BAYARGG_APIKEY ?? "BAYARGG_APIKEY",
+  gemini: env.GEMINI_APIKEY ?? "GEMINI_APIKEY",
+}
+
+export default { system, wabot, tgbot, apikey };
