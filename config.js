@@ -25,12 +25,13 @@ const wabot = {
 
 const tgbot = {
   botname: "BOT_NAME",
-  botfatherToken: env.TELEGRAM_BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
+  botfatherToken: env.BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
 };
 
 const apikey = {
   bayargg: env.BAYARGG_APIKEY ?? "BAYARGG_APIKEY",
   gemini: env.GEMINI_APIKEY ?? "GEMINI_APIKEY",
+  groq: env.GROQ_APIKEY ?? "GROQ_APIKEY",
 }
 
 export default { system, wabot, tgbot, apikey };
