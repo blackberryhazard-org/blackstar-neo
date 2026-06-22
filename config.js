@@ -17,15 +17,28 @@ const system = {
   crashTimeout: 60000,
 };
 
+const owner = {
+  ownerName: "OWNER_NAME",
+  ownerNumbers: {
+    whatsapp: "",
+    telegram: "",
+  },
+  ownerTelegramId: "",
+};  
+
 const wabot = {
-  botname: "BOT_NAME",
+  botName: "BOT_NAME",
   botNumber: "BOT_NUMBER",
   pairingCode: true,
+  customPairingCode: "",
+  thumbnail: "https://ik.imagekit.io/vmimm0jfp/blackberryhazard/blackstar.png",
 };
 
 const tgbot = {
-  botname: "BOT_NAME",
-  botfatherToken: env.BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
+  botName: "BOT_NAME",
+  botFatherToken: env.BOTFATHER_TOKEN ?? "BOTFATHER_TOKEN",
+  mustJoin: [],
+  thumbnail: "https://ik.imagekit.io/vmimm0jfp/blackberryhazard/blackstar.png",
 };
 
 const apikey = {
@@ -34,4 +47,4 @@ const apikey = {
   groq: env.GROQ_APIKEY ?? "GROQ_APIKEY",
 }
 
-export default { system, wabot, tgbot, apikey };
+export default { system, owner, wabot, tgbot, apikey };
