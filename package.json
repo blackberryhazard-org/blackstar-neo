@@ -16,7 +16,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production MALLOC_ARENA_MAX=2 node --max-old-space-size=320 --expose-gc index.js",
-    "test": "node --import ./loader.js --test",
+    "test": "node --import ./load_globals.js --import ./loader.js --test",
     "lint": "biome check .",
     "format": "biome check --write ."
   },

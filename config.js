@@ -1,3 +1,5 @@
+import { cpus } from "node:os";
+
 try {
   process.loadEnvFile();
 } catch {
@@ -5,6 +7,7 @@ try {
 }
 
 const env = process.env;
+const CPU_COUNT = cpus().length;
 
 const system = {
   services: {
@@ -15,6 +18,8 @@ const system = {
   maxRAMUsage: 2000,
   maxCrash: 5,
   crashTimeout: 60000,
+  localTimezone: "Asia/Jakarta",
+  ffmpegConcurrency: Math.max(4, Math.floor(CPU_COUNT * 1.3)),
 };
 
 const owner = {

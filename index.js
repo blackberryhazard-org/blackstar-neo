@@ -1,7 +1,7 @@
+import "./load_globals.js";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 import { createConsola } from "consola";
-
 import config from "./config.js";
 
 const logger = createConsola({
@@ -16,22 +16,22 @@ const LOADER = fileURLToPath(new URL("./loader.js", import.meta.url));
 
 const ALL_SERVICES = [
   {
-    key: "whatsappBot",
-    name: "whatsappBot",
-    scriptPath: fileURLToPath(new URL("./wa/index.js", import.meta.url)),
-  },
-  {
     key: "telegramBot",
     name: "telegramBot",
     scriptPath: fileURLToPath(new URL("./tg/index.js", import.meta.url)),
+  },
+  {
+    key: "whatsappBot",
+    name: "whatsappBot",
+    scriptPath: fileURLToPath(new URL("./wa/index.js", import.meta.url)),
   },
 ];
 
 const activeProcesses = new Map();
 const crashLogs = new Map();
 
-const MAX_CRASHES = config.system.maxCrash;
-const CRASH_WINDOW_MS = config.system.crashTimeout;
+const MAX_CRASHES = config.system.maxCrash || 5;
+const CRASH_WINDOW_MS = config.system.crashTimeout || 60000;
 
 const startService = (service) => {
   const now = Date.now();
@@ -40,15 +40,14 @@ const startService = (service) => {
 
   if (crashes.length >= MAX_CRASHES) {
     logger.fatal(
-      `${service.name} serial crash detected ! disabling auto-restart.`,
+      `${service.name} serial crash detected! Disabling auto-restart.`,
     );
     config.system.services[service.key] = false;
     return;
   }
 
   const botLogger = logger.withTag(service.name);
-
-  botLogger.info(`Starting service...`);
+  botLogger.info("Starting service...");
 
   const instance = spawn(
     process.execPath,
@@ -63,21 +62,21 @@ const startService = (service) => {
 
   instance.stdout.on("data", (data) => {
     const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
+    for (const line of lines) {
       if (line) botLogger.log(line);
-    });
+    }
   });
 
   instance.stderr.on("data", (data) => {
     const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
+    for (const line of lines) {
       if (line) botLogger.error(line);
-    });
+    }
   });
 
   instance.on("message", (data) => {
     if (data === "leak" || data === "reset") {
-      botLogger.warn(`Memory leak detected.`);
+      botLogger.warn("Worker requested restart due to " + data);
       instance.kill("SIGTERM");
     }
   });
@@ -90,7 +89,7 @@ const startService = (service) => {
       crashLogs.set(service.key, crashes);
       botLogger.error(`Exited abnormally with code ${code}`);
     } else {
-      botLogger.success(`Stopped normally.`);
+      botLogger.success("Stopped normally.");
     }
 
     if (config.system.services[service.key]) {
@@ -99,28 +98,17 @@ const startService = (service) => {
   });
 };
 
-export const updateServiceState = (key, isActive) => {
-  config.system.services[key] = isActive;
-  const service = ALL_SERVICES.find((s) => s.key === key);
-  const isRunning = activeProcesses.has(key);
-
-  if (isActive && !isRunning) {
-    startService(service);
-  } else if (!isActive && isRunning) {
-    logger.info(`Stopping ${service.name} dynamically...`);
-    activeProcesses.get(key).kill("SIGTERM");
+const stopAllServices = async () => {
+  logger.warn("Stopping all services gracefully...");
+  for (const [key, instance] of activeProcesses.entries()) {
+    logger.info(`Stopping ${key}...`);
+    instance.kill("SIGTERM");
   }
 };
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
-  process.on(signal, () => {
-    logger.warn(
-      `Accepting signal ${signal}. Stopping all services gracefully...`,
-    );
-    for (const [key, instance] of activeProcesses.entries()) {
-      logger.info(`Stopping child process: ${key}...`);
-      instance.kill("SIGTERM");
-    }
+  process.on(signal, async () => {
+    await stopAllServices();
     setTimeout(() => {
       logger.success("Service Manager stopped.");
       process.exit(0);
@@ -128,6 +116,13 @@ export const updateServiceState = (key, isActive) => {
   });
 });
 
-ALL_SERVICES.forEach((service) => {
-  if (config.system.services[service.key]) startService(service);
-});
+const startAllServices = async () => {
+  for (const service of ALL_SERVICES) {
+    if (config.system.services[service.key]) {
+      startService(service);
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+    }
+  }
+};
+
+startAllServices();

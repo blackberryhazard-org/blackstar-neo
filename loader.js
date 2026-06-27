@@ -1,5 +1,5 @@
+import "./load_globals.js";
 import { createConsola } from "consola";
-import config from "./config.js";
 
 const workerLogger = createConsola({
   defaults: {
@@ -7,7 +7,7 @@ const workerLogger = createConsola({
   },
 });
 
-const MAX_RAM_MB = config.system.maxRAMUsage;
+const MAX_RAM_MB = global.maxRAMUsage || 2000;
 
 setInterval(() => {
   const memoryUsage = process.memoryUsage();
@@ -31,7 +31,6 @@ setInterval(() => {
   }
 }, 60000);
 
-global.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 global.Logger = workerLogger;
 
 process.on("uncaughtException", (err) => {
