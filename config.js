@@ -24,7 +24,7 @@ const owner = {
     telegram: "",
   },
   ownerTelegramId: "",
-};  
+};
 
 const wabot = {
   botName: "BOT_NAME",
@@ -45,6 +45,6 @@ const apikey = {
   bayargg: env.BAYARGG_APIKEY ?? "BAYARGG_APIKEY",
   gemini: env.GEMINI_APIKEY ?? "GEMINI_APIKEY",
   groq: env.GROQ_APIKEY ?? "GROQ_APIKEY",
-}
+};
 
 export default { system, owner, wabot, tgbot, apikey };

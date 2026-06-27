@@ -34,68 +34,82 @@ const MAX_CRASHES = config.system.maxCrash;
 const CRASH_WINDOW_MS = config.system.crashTimeout;
 
 const startService = (service) => {
-  const now = Date.now();
-  let crashes = crashLogs.get(service.key) || [];
-  crashes = crashes.filter((timestamp) => now - timestamp < CRASH_WINDOW_MS);
+  return new Promise((resolve) => {
+    const now = Date.now();
+    let crashes = crashLogs.get(service.key) || [];
+    crashes = crashes.filter((timestamp) => now - timestamp < CRASH_WINDOW_MS);
 
-  if (crashes.length >= MAX_CRASHES) {
-    logger.fatal(
-      `${service.name} serial crash detected ! disabling auto-restart.`,
+    if (crashes.length >= MAX_CRASHES) {
+      logger.fatal(
+        `${service.name} serial crash detected ! disabling auto-restart.`,
+      );
+      config.system.services[service.key] = false;
+      resolve();
+      return;
+    }
+
+    const botLogger = logger.withTag(service.name);
+
+    botLogger.info(`Starting service...`);
+
+    const instance = spawn(
+      process.execPath,
+      ["--import", LOADER, ...process.execArgv, service.scriptPath],
+      {
+        cwd: CWD,
+        stdio: ["inherit", "pipe", "pipe", "ipc"],
+      },
     );
-    config.system.services[service.key] = false;
-    return;
-  }
 
-  const botLogger = logger.withTag(service.name);
+    activeProcesses.set(service.key, instance);
 
-  botLogger.info(`Starting service...`);
+    let isResolved = false;
+    const resolveOnce = () => {
+      if (!isResolved) {
+        isResolved = true;
+        resolve();
+      }
+    };
 
-  const instance = spawn(
-    process.execPath,
-    ["--import", LOADER, ...process.execArgv, service.scriptPath],
-    {
-      cwd: CWD,
-      stdio: ["inherit", "pipe", "pipe", "ipc"],
-    },
-  );
-
-  activeProcesses.set(service.key, instance);
-
-  instance.stdout.on("data", (data) => {
-    const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
-      if (line) botLogger.log(line);
+    instance.stdout.on("data", (data) => {
+      const lines = data.toString().trim().split("\n");
+      lines.forEach((line) => {
+        if (line) botLogger.log(line);
+      });
     });
-  });
 
-  instance.stderr.on("data", (data) => {
-    const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
-      if (line) botLogger.error(line);
+    instance.stderr.on("data", (data) => {
+      const lines = data.toString().trim().split("\n");
+      lines.forEach((line) => {
+        if (line) botLogger.error(line);
+      });
     });
-  });
 
-  instance.on("message", (data) => {
-    if (data === "leak" || data === "reset") {
-      botLogger.warn(`Memory leak detected.`);
-      instance.kill("SIGTERM");
-    }
-  });
+    instance.on("message", (data) => {
+      if (data === "ready") {
+        resolveOnce();
+      } else if (data === "leak" || data === "reset") {
+        botLogger.warn(`Memory leak detected.`);
+        instance.kill("SIGTERM");
+      }
+    });
 
-  instance.once("exit", (code) => {
-    activeProcesses.delete(service.key);
+    instance.once("exit", (code) => {
+      activeProcesses.delete(service.key);
+      resolveOnce();
 
-    if (code !== 0 && code !== null) {
-      crashes.push(Date.now());
-      crashLogs.set(service.key, crashes);
-      botLogger.error(`Exited abnormally with code ${code}`);
-    } else {
-      botLogger.success(`Stopped normally.`);
-    }
+      if (code !== 0 && code !== null) {
+        crashes.push(Date.now());
+        crashLogs.set(service.key, crashes);
+        botLogger.error(`Exited abnormally with code ${code}`);
+      } else {
+        botLogger.success(`Stopped normally.`);
+      }
 
-    if (config.system.services[service.key]) {
-      setTimeout(() => startService(service), 2000);
-    }
+      if (config.system.services[service.key]) {
+        setTimeout(() => startService(service), 2000);
+      }
+    });
   });
 };
 
@@ -128,6 +142,11 @@ export const updateServiceState = (key, isActive) => {
   });
 });
 
-ALL_SERVICES.forEach((service) => {
-  if (config.system.services[service.key]) startService(service);
-});
+(async () => {
+  for (const service of ALL_SERVICES) {
+    if (config.system.services[service.key]) {
+      await startService(service);
+    }
+  }
+  logger.success("Service Manager is fully operational.");
+})();

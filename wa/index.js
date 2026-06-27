@@ -35,6 +35,7 @@ const startWhatsappBot = async () => {
           const code = await sock.requestPairingCode(phoneNumber);
           const prettyCode = `${code.substring(0, 4)}-${code.substring(4)}`;
           console.log(`🔗 Pairing code for WhatsApp: ${prettyCode}`);
+          if (process.send) process.send("ready");
         } catch (error) {
           console.error("Failed to request pairing code", error);
         }
@@ -43,6 +44,7 @@ const startWhatsappBot = async () => {
 
     if (qr && !config.wabot.pairingCode) {
       console.log("🔗 Scan the QR code to connect to WhatsApp.");
+      if (process.send) process.send("ready");
     }
 
     if (connection === "close") {
@@ -65,7 +67,8 @@ const startWhatsappBot = async () => {
         );
       }
     } else if (connection === "open") {
-      console.log(`✅ Connected to WhatsApp as ${config.wabot.botname}`);
+      console.log(`✅ Connected to WhatsApp as ${config.wabot.botName}`);
+      if (process.send) process.send("ready");
     }
   });
 
