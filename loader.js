@@ -7,7 +7,7 @@ const workerLogger = createConsola({
   },
 });
 
-const MAX_RAM_MB = config.system.maxRAMUsage;
+const MAX_RAM_MB = config.system.maxRAMUsage ?? 2000;
 
 setInterval(() => {
   const memoryUsage = process.memoryUsage();
@@ -31,8 +31,8 @@ setInterval(() => {
   }
 }, 60000);
 
-global.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 global.Logger = workerLogger;
+global.sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 process.on("uncaughtException", (err) => {
   workerLogger.fatal("An Uncaught Exception occurred in the Worker:", err);

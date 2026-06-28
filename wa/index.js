@@ -65,7 +65,7 @@ const startWhatsappBot = async () => {
         );
       }
     } else if (connection === "open") {
-      console.log(`✅ Connected to WhatsApp as ${config.wabot.botname}`);
+      console.log(`✅ Connected to WhatsApp as ${config.wabot.botName}`);
     }
   });
 
@@ -88,6 +88,13 @@ const startWhatsappBot = async () => {
         { quoted: msg },
       );
     }
+  });
+
+  process.once("SIGTERM", () => {
+    sock
+      .logout()
+      .catch(() => {})
+      .finally(() => process.exit(0));
   });
 };
 

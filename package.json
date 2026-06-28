@@ -15,20 +15,25 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "NODE_ENV=production MALLOC_ARENA_MAX=2 node --max-old-space-size=320 --expose-gc index.js",
-    "test": "node --import ./loader.js --test",
+    "start": "node index.js",
+    "stop": "pm2 delete telegram-bot whatsapp-bot",
+    "test": "node --import ./loader.js --test tg/**/*.test.js wa/**/*.test.js",
     "lint": "biome check .",
     "format": "biome check --write ."
   },
   "dependencies": {
     "@hapi/boom": "^10.0.1",
     "@itsliaaa/baileys": "^0.3.17",
+    "better-sqlite3": "^11.10.0",
     "consola": "^3.4.2",
+    "drizzle-orm": "^0.45.2",
     "pino": "^10.3.1",
+    "pm2": "^5.4.3",
     "sawit-utils": "github:indra87g/sawit-utils",
     "telegraf-hardened": "^6.0.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.0"
+    "@biomejs/biome": "^2.5.0",
+    "drizzle-kit": "^0.31.10"
   }
 }

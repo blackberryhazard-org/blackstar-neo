@@ -1,133 +1,112 @@
-import { spawn } from "node:child_process";
-import { fileURLToPath } from "node:url";
 import { createConsola } from "consola";
-
+import pm2 from "pm2";
 import config from "./config.js";
 
 const logger = createConsola({
-  level: 3,
   defaults: {
     tag: "Blackstar",
   },
 });
 
-const CWD = fileURLToPath(new URL(".", import.meta.url));
-const LOADER = fileURLToPath(new URL("./loader.js", import.meta.url));
+const startServices = () => {
+  logger.info("🚀 Connecting to PM2...");
+  pm2.connect((err) => {
+    if (err) {
+      logger.error("❌ Failed to connect to PM2:", err.message);
+      process.exit(2);
+    }
 
-const ALL_SERVICES = [
-  {
-    key: "whatsappBot",
-    name: "whatsappBot",
-    scriptPath: fileURLToPath(new URL("./wa/index.js", import.meta.url)),
-  },
-  {
-    key: "telegramBot",
-    name: "telegramBot",
-    scriptPath: fileURLToPath(new URL("./tg/index.js", import.meta.url)),
-  },
-];
+    const apps = [];
 
-const activeProcesses = new Map();
-const crashLogs = new Map();
+    if (config.system.services.telegramBot) {
+      apps.push({
+        name: "telegram-bot",
+        script: "./tg/index.js",
+        node_args: "--import ./loader.js --max-old-space-size=320 --expose-gc",
+        env: {
+          NODE_ENV: "production",
+        },
+      });
+    }
 
-const MAX_CRASHES = config.system.maxCrash;
-const CRASH_WINDOW_MS = config.system.crashTimeout;
+    if (config.system.services.whatsappBot) {
+      apps.push({
+        name: "whatsapp-bot",
+        script: "./wa/index.js",
+        node_args: "--import ./loader.js --max-old-space-size=320 --expose-gc",
+        env: {
+          NODE_ENV: "production",
+        },
+      });
+    }
 
-const startService = (service) => {
-  const now = Date.now();
-  let crashes = crashLogs.get(service.key) || [];
-  crashes = crashes.filter((timestamp) => now - timestamp < CRASH_WINDOW_MS);
+    if (apps.length === 0) {
+      logger.warn("⚠️ No services enabled in config.js.");
+      pm2.disconnect();
+      return;
+    }
 
-  if (crashes.length >= MAX_CRASHES) {
-    logger.fatal(
-      `${service.name} serial crash detected ! disabling auto-restart.`,
-    );
-    config.system.services[service.key] = false;
-    return;
-  }
+    logger.info(`🚀 Starting ${apps.length} services...`);
 
-  const botLogger = logger.withTag(service.name);
+    let started = 0;
+    for (const app of apps) {
+      pm2.start(app, (err) => {
+        if (err) {
+          logger.error(`❌ Failed to start ${app.name}:`, err.message);
+        } else {
+          logger.success(`✅ Service ${app.name} started.`);
+        }
 
-  botLogger.info(`Starting service...`);
+        started++;
+        if (started === apps.length) {
+          logger.info(
+            "Keep-alive active. Monitoring services for Pterodactyl...",
+          );
 
-  const instance = spawn(
-    process.execPath,
-    ["--import", LOADER, ...process.execArgv, service.scriptPath],
-    {
-      cwd: CWD,
-      stdio: ["inherit", "pipe", "pipe", "ipc"],
-    },
-  );
+          // Monitor processes every 15 seconds
+          setInterval(() => {
+            pm2.list((err, list) => {
+              if (err) return;
 
-  activeProcesses.set(service.key, instance);
+              const managedAppNames = apps.map((a) => a.name);
+              const managedApps = list.filter((a) =>
+                managedAppNames.includes(a.name),
+              );
 
-  instance.stdout.on("data", (data) => {
-    const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
-      if (line) botLogger.log(line);
+              const allRunning = managedApps.every(
+                (a) => a.pm2_env.status === "online",
+              );
+
+              if (!allRunning) {
+                logger.warn("⚠️ Some services are not online. Current status:");
+                for (const a of managedApps) {
+                  logger.info(`- ${a.name}: ${a.pm2_env.status}`);
+                }
+              }
+            });
+          }, 15000);
+        }
+      });
+    }
+  });
+
+  // Handle graceful shutdown
+  const handleShutdown = () => {
+    logger.warn("🛑 Shutdown signal received. Stopping services...");
+    pm2.connect((err) => {
+      if (err) {
+        process.exit(1);
+      }
+      pm2.delete("all", () => {
+        pm2.disconnect();
+        logger.success("✅ All services stopped. Exiting.");
+        process.exit(0);
+      });
     });
-  });
+  };
 
-  instance.stderr.on("data", (data) => {
-    const lines = data.toString().trim().split("\n");
-    lines.forEach((line) => {
-      if (line) botLogger.error(line);
-    });
-  });
-
-  instance.on("message", (data) => {
-    if (data === "leak" || data === "reset") {
-      botLogger.warn(`Memory leak detected.`);
-      instance.kill("SIGTERM");
-    }
-  });
-
-  instance.once("exit", (code) => {
-    activeProcesses.delete(service.key);
-
-    if (code !== 0 && code !== null) {
-      crashes.push(Date.now());
-      crashLogs.set(service.key, crashes);
-      botLogger.error(`Exited abnormally with code ${code}`);
-    } else {
-      botLogger.success(`Stopped normally.`);
-    }
-
-    if (config.system.services[service.key]) {
-      setTimeout(() => startService(service), 2000);
-    }
-  });
+  process.on("SIGINT", handleShutdown);
+  process.on("SIGTERM", handleShutdown);
 };
 
-export const updateServiceState = (key, isActive) => {
-  config.system.services[key] = isActive;
-  const service = ALL_SERVICES.find((s) => s.key === key);
-  const isRunning = activeProcesses.has(key);
-
-  if (isActive && !isRunning) {
-    startService(service);
-  } else if (!isActive && isRunning) {
-    logger.info(`Stopping ${service.name} dynamically...`);
-    activeProcesses.get(key).kill("SIGTERM");
-  }
-};
-
-["SIGINT", "SIGTERM"].forEach((signal) => {
-  process.on(signal, () => {
-    logger.warn(
-      `Accepting signal ${signal}. Stopping all services gracefully...`,
-    );
-    for (const [key, instance] of activeProcesses.entries()) {
-      logger.info(`Stopping child process: ${key}...`);
-      instance.kill("SIGTERM");
-    }
-    setTimeout(() => {
-      logger.success("Service Manager stopped.");
-      process.exit(0);
-    }, 1000);
-  });
-});
-
-ALL_SERVICES.forEach((service) => {
-  if (config.system.services[service.key]) startService(service);
-});
+startServices();
