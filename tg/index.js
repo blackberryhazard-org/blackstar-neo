@@ -6,7 +6,7 @@ import { users } from "./db/schema.js";
 import { authMiddleware, mustJoinMiddleware } from "./middleware.js";
 
 const startTelegramBot = async () => {
-  const token = config.tgbot?.botFatherToken;
+  const token = config.tgbot.botFatherToken;
 
   if (!token || token === "BOTFATHER_TOKEN") {
     console.warn(

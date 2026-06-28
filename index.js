@@ -1,5 +1,7 @@
-import { spawn } from "node:child_process";
+import "./load_globals.js";
 import { createConsola } from "consola";
+import pm2 from "pm2";
+import config from "./config.js";
 
 const logger = createConsola({
   defaults: {
@@ -8,24 +10,61 @@ const logger = createConsola({
 });
 
 const startServices = () => {
-  logger.info("🚀 Starting services with PM2...");
-  const pm2 = spawn("npx", ["pm2", "start", "ecosystem.config.cjs"], {
-    stdio: "inherit",
-    shell: false,
-  });
-
-  pm2.on("close", (code) => {
-    if (code === 0) {
-      logger.success(
-        "✅ Services started. Use 'npx pm2 list' to check status.",
-      );
-    } else {
-      logger.error(`❌ PM2 exited with code ${code}`);
+  logger.info("🚀 Connecting to PM2...");
+  pm2.connect((err) => {
+    if (err) {
+      logger.error("❌ Failed to connect to PM2:", err.message);
+      process.exit(2);
     }
-  });
 
-  pm2.on("error", (err) => {
-    logger.error("❌ Failed to start PM2 process:", err.message);
+    const apps = [];
+
+    if (config.system.services.telegramBot) {
+      apps.push({
+        name: "telegram-bot",
+        script: "./tg/index.js",
+        node_args: "--import ./loader.js --max-old-space-size=320 --expose-gc",
+        env: {
+          NODE_ENV: "production",
+        },
+      });
+    }
+
+    if (config.system.services.whatsappBot) {
+      apps.push({
+        name: "whatsapp-bot",
+        script: "./wa/index.js",
+        node_args: "--import ./loader.js --max-old-space-size=320 --expose-gc",
+        env: {
+          NODE_ENV: "production",
+        },
+      });
+    }
+
+    if (apps.length === 0) {
+      logger.warn("⚠️ No services enabled in config.js.");
+      pm2.disconnect();
+      return;
+    }
+
+    logger.info(`🚀 Starting ${apps.length} services...`);
+
+    let started = 0;
+    for (const app of apps) {
+      pm2.start(app, (err) => {
+        if (err) {
+          logger.error(`❌ Failed to start ${app.name}:`, err.message);
+        } else {
+          logger.success(`✅ Service ${app.name} started.`);
+        }
+
+        started++;
+        if (started === apps.length) {
+          pm2.disconnect();
+          logger.info("Use 'npx pm2 list' to monitor your bots.");
+        }
+      });
+    }
   });
 };
 
