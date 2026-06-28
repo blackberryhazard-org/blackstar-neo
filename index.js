@@ -1,4 +1,3 @@
-import "./load_globals.js";
 import { createConsola } from "consola";
 import pm2 from "pm2";
 import config from "./config.js";
