@@ -1,21 +1,37 @@
 import config from "../config.js";
 
+const BACK_BUTTON = [[{ text: "⬅️ Back", callback_data: "menu" }]];
+
+async function sendSubMenu(
+  bot,
+  chatId,
+  title,
+  content,
+  footer = `Powered by ${config.tgbot.botName || "Blackstar"}`,
+) {
+  const text = `<blockquote>
+<strong>${title}</strong>
+
+${content}
+
+<i>${footer}</i>
+</blockquote>`;
+  await bot.telegram.sendMessage(chatId, text, {
+    parse_mode: "HTML",
+    reply_markup: { inline_keyboard: BACK_BUTTON },
+  });
+}
+
 export async function sendMenu(bot, chatId, name = "User") {
   const now = new Date();
-
+  const tz = config.system.localTimezone || "Asia/Jakarta";
   const tanggal = now.toLocaleDateString("id-ID", {
     day: "2-digit",
     month: "long",
     year: "numeric",
-    timeZone: config.system.localTimezone || "Asia/Jakarta",
+    timeZone: tz,
   });
-
-  const waktu = `${now.toLocaleTimeString("id-ID", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    timeZone: config.system.localTimezone || "Asia/Jakarta",
-  })} WIB`;
+  const waktu = `${now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit", timeZone: tz })} WIB`;
 
   const caption = `<blockquote>
 <b>👋 Hello, ${name}</b>
@@ -56,151 +72,66 @@ Ketik <code>/info</code> untuk melihat informasi bot
   });
 }
 
-export async function sendSearchMenu(bot, chatId) {
-  const text = `<blockquote>
-<b>🔎 SEARCH MENU</b>
-
-Temukan berbagai informasi dengan cepat melalui fitur pencarian yang tersedia.
-
-┌<b> ALL SEARCH MENU</b>
-│ /ytsearch    • Search YouTube Video
-│ /movie       • Cari Movie di IMDB
-│ /playstore   • Cari Apk di play store
-│ /pin         • Cari gambar dari pinterest
-│ /ttsearch    • Cari vidio di tiktok
-└——————————————>
-
-<i>Powered by ${config.tgbot.botName || "Blackstar"}</i>
-</blockquote>`;
-
-  await bot.telegram.sendMessage(chatId, text, {
-    parse_mode: "HTML",
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "⬅️ Back",
-            callback_data: "menu",
-          },
-        ],
-      ],
-    },
-  });
-}
-
-export async function sendDownloaderMenu(bot, chatId) {
-  const text = `<blockquote>
-<b>📥 DOWNLOADER MENU</b>
-
-Download video / foto dari berbagai platform dengan cepat dan mudah.
-
-┌<b> ALL DOWNLOADER MENU</b>
-│ /tt   • TikTok Downloader
-│ /mf   • MediaFire Downloader
-│ /ytplay • Play yt vidio (support download mp4/mp3)
-└——————————————>
-
-<i>Powered by ${config.tgbot.botName || "Blackstar"}</i>
-</blockquote>`;
-
-  await bot.telegram.sendMessage(chatId, text, {
-    parse_mode: "HTML",
-    reply_markup: {
-      inline_keyboard: [
-        [
-          {
-            text: "⬅️ Back",
-            callback_data: "menu",
-          },
-        ],
-      ],
-    },
-  });
-}
-
-export async function sendStalkerMenu(bot, chatId) {
-  await bot.telegram.sendMessage(
+export const sendSearchMenu = (bot, chatId) =>
+  sendSubMenu(
+    bot,
     chatId,
-    `<blockquote>
-<strong>🕵️ MENU STALKER</strong>
-
-Akses fitur pencarian data akun dari berbagai platform.
-
-┌<b> ALL STALKER MENU</b>
-│ /ttstalk   • TikTok Stalker
-│ /ghstalk   • Github Stalker
-└——————————————————————————>
-
-<i>Powered by ${config.owner.ownerName || "Developer"}</i>
-</blockquote>`,
-    {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "⬅️ Back",
-              callback_data: "menu",
-            },
-          ],
-        ],
-      },
-    },
+    "🔎 SEARCH MENU",
+    "Temukan berbagai informasi dengan cepat melalui fitur pencarian yang tersedia.\n\n" +
+      "┌<b> ALL SEARCH MENU</b>\n" +
+      "│ /ytsearch    • Search YouTube Video\n" +
+      "│ /movie       • Cari Movie di IMDB\n" +
+      "│ /playstore   • Cari Apk di play store\n" +
+      "│ /pin         • Cari gambar dari pinterest\n" +
+      "│ /ttsearch    • Cari vidio di tiktok\n" +
+      "└——————————————>",
   );
-}
 
-export async function sendAiMenu(bot, chatId) {
-  await bot.telegram.sendMessage(
+export const sendDownloaderMenu = (bot, chatId) =>
+  sendSubMenu(
+    bot,
     chatId,
-    `<blockquote>
-<strong>🧠 MENU AI</strong>
-
-Pusat fitur Artificial Intelligence untuk
-chat, coding, penjelasan, dan bantuan ide.
-
-┌<b> ALL AI MENU</b>
-│ /gemini   •   Gemini 2-5 Flash
-│ /claude   •   Claude 3 Haikku
-└——————————————————————————>
-
-</blockquote>`,
-    {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "⬅️ Back",
-              callback_data: "menu",
-            },
-          ],
-        ],
-      },
-    },
+    "📥 DOWNLOADER MENU",
+    "Download video / foto dari berbagai platform dengan cepat dan mudah.\n\n" +
+      "┌<b> ALL DOWNLOADER MENU</b>\n" +
+      "│ /tt   • TikTok Downloader\n" +
+      "│ /mf   • MediaFire Downloader\n" +
+      "│ /ytplay • Play yt vidio (support download mp4/mp3)\n" +
+      "└——————————————>",
   );
-}
 
-export async function sendToolsMenu(bot, chatId) {
-  await bot.telegram.sendMessage(
+export const sendStalkerMenu = (bot, chatId) =>
+  sendSubMenu(
+    bot,
     chatId,
-    `<blockquote>
-<strong>🛠 MENU TOOLS</strong>
-
-Fitur masih dalam tahap pengembangan.
-
-</blockquote>`,
-    {
-      parse_mode: "HTML",
-      reply_markup: {
-        inline_keyboard: [
-          [
-            {
-              text: "⬅️ Back",
-              callback_data: "menu",
-            },
-          ],
-        ],
-      },
-    },
+    "🕵️ MENU STALKER",
+    "Akses fitur pencarian data akun dari berbagai platform.\n\n" +
+      "┌<b> ALL STALKER MENU</b>\n" +
+      "│ /ttstalk   • TikTok Stalker\n" +
+      "│ /ghstalk   • Github Stalker\n" +
+      "└——————————————————————————>",
+    `Powered by ${config.owner.ownerName || "Developer"}`,
   );
-}
+
+export const sendAiMenu = (bot, chatId) =>
+  sendSubMenu(
+    bot,
+    chatId,
+    "🧠 MENU AI",
+    "Pusat fitur Artificial Intelligence untuk\n" +
+      "chat, coding, penjelasan, dan bantuan ide.\n\n" +
+      "┌<b> ALL AI MENU</b>\n" +
+      "│ /gemini   •   Gemini 2-5 Flash\n" +
+      "│ /claude   •   Claude 3 Haikku\n" +
+      "└——————————————————————————>",
+    "",
+  );
+
+export const sendToolsMenu = (bot, chatId) =>
+  sendSubMenu(
+    bot,
+    chatId,
+    "🛠 MENU TOOLS",
+    "Fitur masih dalam tahap pengembangan.",
+    "",
+  );
