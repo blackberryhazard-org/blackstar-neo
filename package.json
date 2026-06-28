@@ -17,7 +17,7 @@
   "scripts": {
     "start": "pm2 start ecosystem.config.cjs",
     "stop": "pm2 delete ecosystem.config.cjs",
-    "test": "node --import ./load_globals.js --import ./loader.js --test",
+    "test": "node --import ./loader.js --test tg/**/*.test.js wa/**/*.test.js",
     "lint": "biome check .",
     "format": "biome check --write ."
   },

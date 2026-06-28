@@ -9,7 +9,7 @@ const startTelegramBot = async () => {
   const token = config.tgbot?.botFatherToken;
 
   if (!token || token === "BOTFATHER_TOKEN") {
-    console.log(
+    console.warn(
       "⚠️ Telegram bot token not provided or is default. Skipping Telegram bot initialization.",
     );
     return;
@@ -126,7 +126,6 @@ const startTelegramBot = async () => {
     })
     .then(() => {
       console.log(`✅ Connected to Telegram as ${config.tgbot.botName}`);
-      global.tgBot = bot;
     })
     .catch((err) => {
       console.error("❌ Failed to start Telegram bot:", err);
@@ -134,9 +133,11 @@ const startTelegramBot = async () => {
 
   const stopBot = (signal) => {
     try {
-      bot.stop(signal);
-    } catch (_e) {
-      // Ignore "Bot is not running" error if it happens during stop
+      if (bot) {
+        bot.stop(signal);
+      }
+    } catch (e) {
+      console.error(`❌ Error stopping bot with signal ${signal}:`, e);
     }
   };
 
