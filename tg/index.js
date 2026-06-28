@@ -132,8 +132,16 @@ const startTelegramBot = async () => {
       console.error("❌ Failed to start Telegram bot:", err);
     });
 
-  process.once("SIGINT", () => bot.stop("SIGINT"));
-  process.once("SIGTERM", () => bot.stop("SIGTERM"));
+  const stopBot = (signal) => {
+    try {
+      bot.stop(signal);
+    } catch (_e) {
+      // Ignore "Bot is not running" error if it happens during stop
+    }
+  };
+
+  process.once("SIGINT", () => stopBot("SIGINT"));
+  process.once("SIGTERM", () => stopBot("SIGTERM"));
 };
 
 await startTelegramBot();
