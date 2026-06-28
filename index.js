@@ -59,12 +59,54 @@ const startServices = () => {
 
         started++;
         if (started === apps.length) {
-          pm2.disconnect();
-          logger.info("Use 'npx pm2 list' to monitor your bots.");
+          logger.info(
+            "Keep-alive active. Monitoring services for Pterodactyl...",
+          );
+
+          // Monitor processes every 15 seconds
+          setInterval(() => {
+            pm2.list((err, list) => {
+              if (err) return;
+
+              const managedAppNames = apps.map((a) => a.name);
+              const managedApps = list.filter((a) =>
+                managedAppNames.includes(a.name),
+              );
+
+              const allRunning = managedApps.every(
+                (a) => a.pm2_env.status === "online",
+              );
+
+              if (!allRunning) {
+                logger.warn("⚠️ Some services are not online. Current status:");
+                for (const a of managedApps) {
+                  logger.info(`- ${a.name}: ${a.pm2_env.status}`);
+                }
+              }
+            });
+          }, 15000);
         }
       });
     }
   });
+
+  // Handle graceful shutdown
+  const handleShutdown = () => {
+    logger.warn("🛑 Shutdown signal received. Stopping services...");
+    pm2.connect((err) => {
+      if (err) {
+        process.exit(1);
+      }
+      pm2.delete("all", () => {
+        pm2.disconnect();
+        logger.success("✅ All services stopped. Exiting.");
+        process.exit(0);
+      });
+    });
+  };
+
+  process.on("SIGINT", handleShutdown);
+  process.on("SIGTERM", handleShutdown);
 };
 
 startServices();
