@@ -1,0 +1,8 @@
+{
+  "schema": "./wa/db/schema.js",
+  "out": "./drizzle/wa",
+  "dialect": "sqlite",
+  "dbCredentials": {
+    "url": "data/wa/database.db"
+  }
+}

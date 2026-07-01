@@ -1,0 +1,8 @@
+{
+  "schema": "./tg/db/schema.js",
+  "out": "./drizzle/tg",
+  "dialect": "sqlite",
+  "dbCredentials": {
+    "url": "data/tg/database.db"
+  }
+}

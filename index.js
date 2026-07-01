@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { createConsola } from "consola";
 import pm2 from "pm2";
 import config from "./config.js";
@@ -8,7 +9,45 @@ const logger = createConsola({
   },
 });
 
+const migrateDatabases = () => {
+  const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+
+  if (config.system.services.telegramBot) {
+    logger.info("📦 Migrating Telegram database...");
+    try {
+      execFileSync(
+        npx,
+        ["drizzle-kit", "push", "--config", "drizzle.tg.config.json"],
+        {
+          stdio: "inherit",
+        },
+      );
+      logger.success("✅ Telegram database migrated.");
+    } catch (e) {
+      logger.error("❌ Failed to migrate Telegram database:", e.message);
+    }
+  }
+
+  if (config.system.services.whatsappBot) {
+    logger.info("📦 Migrating WhatsApp database...");
+    try {
+      execFileSync(
+        npx,
+        ["drizzle-kit", "push", "--config", "drizzle.wa.config.json"],
+        {
+          stdio: "inherit",
+        },
+      );
+      logger.success("✅ WhatsApp database migrated.");
+    } catch (e) {
+      logger.error("❌ Failed to migrate WhatsApp database:", e.message);
+    }
+  }
+};
+
 const startServices = () => {
+  migrateDatabases();
+
   logger.info("🚀 Connecting to PM2...");
   pm2.connect((err) => {
     if (err) {
@@ -63,7 +102,6 @@ const startServices = () => {
             "Keep-alive active. Monitoring services for Pterodactyl...",
           );
 
-          // Monitor processes every 15 seconds
           setInterval(() => {
             pm2.list((err, list) => {
               if (err) return;
@@ -90,7 +128,6 @@ const startServices = () => {
     }
   });
 
-  // Handle graceful shutdown
   const handleShutdown = () => {
     logger.warn("🛑 Shutdown signal received. Stopping services...");
     pm2.connect((err) => {
