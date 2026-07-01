@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { createConsola } from "consola";
 import pm2 from "pm2";
 import config from "./config.js";
@@ -10,12 +10,18 @@ const logger = createConsola({
 });
 
 const migrateDatabases = () => {
+  const npx = process.platform === "win32" ? "npx.cmd" : "npx";
+
   if (config.system.services.telegramBot) {
     logger.info("📦 Migrating Telegram database...");
     try {
-      execSync("npx drizzle-kit push --config drizzle.tg.config.json", {
-        stdio: "inherit",
-      });
+      execFileSync(
+        npx,
+        ["drizzle-kit", "push", "--config", "drizzle.tg.config.json"],
+        {
+          stdio: "inherit",
+        },
+      );
       logger.success("✅ Telegram database migrated.");
     } catch (e) {
       logger.error("❌ Failed to migrate Telegram database:", e.message);
@@ -25,9 +31,13 @@ const migrateDatabases = () => {
   if (config.system.services.whatsappBot) {
     logger.info("📦 Migrating WhatsApp database...");
     try {
-      execSync("npx drizzle-kit push --config drizzle.wa.config.json", {
-        stdio: "inherit",
-      });
+      execFileSync(
+        npx,
+        ["drizzle-kit", "push", "--config", "drizzle.wa.config.json"],
+        {
+          stdio: "inherit",
+        },
+      );
       logger.success("✅ WhatsApp database migrated.");
     } catch (e) {
       logger.error("❌ Failed to migrate WhatsApp database:", e.message);
